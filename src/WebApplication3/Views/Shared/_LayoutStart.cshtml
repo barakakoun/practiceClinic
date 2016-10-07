@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrapValidator.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/lib/alertify/css/alertify.core.css">
+    <link rel="stylesheet" href="~/lib/alertify/css/alertify.default.css">
+    @*<script src="~/lib/jquery/dist/jquery.min.js" crossorigin="anonymous"></script>*@
+    @*<script src="~/lib/bootstrap/dist/js/tether.min.js" crossorigin="anonymous"></script>*@
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.js" crossorigin="anonymous"></script>*@
+
+    <title>@ViewData["Title"] - Private Practice - Dentist</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/tar1.css" media="screen" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary barak-navbar navbar-fixed-top">
+        @{ Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");}
+        <a asp-controller="Home" asp-action="Index" class="navbar-brand" id="navbarTitle">Private Practice</a>
+        <ul class="nav navbar-nav">
+            @if ((currPatient != null) && (currPatient.ID == 1))
+            {
+                <li class="nav-item"><a class="nav-link" asp-controller="Patients" asp-action="Index">Patients</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Procedures" asp-action="Index">Procedures</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="ProcedureTypes" asp-action="Index">Procedure Types</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Drugs" asp-action="Index">Drugs</a></li>
+            }
+        </ul>
+        <form class="form-inline pull-xs-right">
+                @Html.Partial("_LoginPartial")
+        </form>
+    </nav>
+        <section id="intro">
+            <header>
+                <h2>Do you have questions for me?</h2>
+            </header>
+        </section>
+        <div id="content">
+            <div id="mainContent">
+                @RenderBody()
+            </div>
+        </div>
+        <footer class="bg-primary">
+            <!-- Footer -->
+            <div id="allRights">© כל הזכויות שמורות לניב גבאי וברק קקון</div>
+        </footer>
+
+        <environment names="Development">
+            <script src="~/lib/bootstrap/dist/js/tether.min.js"></script>
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            @*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            @*<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>*@
+            @*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
+            <script src="~/lib/bootstrap/dist/js/bootstrapValidator.js"></script>
+            <script src="~/lib/alertify/js/alertify.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+        </environment>
+        <environment names="Staging,Production">
+            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery">
+            </script>
+            <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+            </script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+        </environment>
+
+        @RenderSection("scripts", required: false)
+</body>
+</html>

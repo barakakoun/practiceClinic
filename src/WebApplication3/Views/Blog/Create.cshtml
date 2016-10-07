@@ -1,0 +1,109 @@
+@model WebApplication3.Models.Post
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Post</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Author" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group" style="display:none">
+            <label asp-for="PublishDate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="PublishDate" class="form-control" value="@System.DateTime.Now.ToString("dd/MM/yyyy")"/>
+                <span asp-validation-for="PublishDate" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SiteAddress" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="SiteAddress" class="form-control" />
+                <span asp-validation-for="SiteAddress" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea name="Content" id="Content" required></textarea>
+                <span asp-validation-for="Content" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Image" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input onclick="changeImage()" type="radio" name="Image" value="" checked> No Image <br>
+                <input onclick="changeImage(this.value)" type="radio" name="Image" value="/images/flower.png"> flower <br>
+                <input onclick="changeImage(this.value)" type="radio" name="Image" value="/images/flower2.png">flower2 <br>
+                <input onclick="changeImage(this.value)" type="radio" name="Image" value="/images/flower3.png">flower3 <br>
+                <input onclick="changeImage(this.value)" type="radio" name="Image" value="/images/flower4.png">flower4 <br>
+                <span asp-validation-for="Image" class="text-danger" />
+            </div>
+            <img id="chosenImage" src="/images/flower.png" alt="Flower" style="display: none; margin: auto;"/><br>
+        </div>
+        <div class="form-group">
+            <label asp-for="Video" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input onclick="changeVideo()" type="radio" name="Video" value="" checked> No Video <br>
+                <input onclick="changeVideo(this.value)" type="radio" name="Video" value="yKNxeF4KMsY"> Yellow - Coldplay <br>
+                <input onclick="changeVideo(this.value)" type="radio" name="Video" value="lA-gGl6qihQ"> Trouble - Cage The Elephant <br>
+                <input onclick="changeVideo(this.value)" type="radio" name="Video" value="BgK_Er7WZVg"> Mind Mischief - Tame Impala <br>
+                <input onclick="changeVideo(this.value)" type="radio" name="Video" value="sb2np1HGqxg"> Poison - Bell Biv DeVoe <br>
+                <span asp-validation-for="Video" class="text-danger" />
+            </div>
+            <iframe id="chosenVideo" width="560" height="315" src="" style="display: none;" frameborder="0"></iframe>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="IndexManage">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript" language="javascript">
+        function changeImage(direc) {
+            if (direc) {
+                document.getElementById("chosenImage").style.display = 'block';
+                document.getElementById("chosenImage").src = direc;
+            }
+            else {
+                document.getElementById("chosenImage").style.display = 'none';
+            }
+    }
+    function changeVideo(videoID) {
+        if (videoID) {
+            document.getElementById("chosenVideo").style.display = 'block';
+            document.getElementById("chosenVideo").src = "https://www.youtube.com/embed/" + videoID;
+        }
+        else {
+            document.getElementById("chosenVideo").style.display = 'none';
+        }
+    }
+    </script>
+}

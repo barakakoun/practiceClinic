@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNet.Http
+@{
+    Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");
+}
+@if (currPatient != null)
+{
+    
+    <p id="helloUser">Hello @currPatient.FirstName!</p>
+    <a asp-controller="Patients" asp-action="LogOff" class="btn btn-outline-secondary">log off</a>
+}
+else
+{
+    <a asp-controller="Patients" asp-action="Create" class="btn btn-outline-secondary">Register</a>
+    <a asp-controller="Patients" asp-action="LogIn" class="btn btn-outline-secondary">Log in</a>
+}

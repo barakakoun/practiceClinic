@@ -1,0 +1,35 @@
+@model WebApplication3.Models.Post
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div id="mainContent">
+        <section>
+            <article class="Post">
+                <header>
+                    <h2>@Html.DisplayFor(model => model.Title)</h2>
+                    <p>
+                        Posted on
+                        <time datetime="2009-06-29T23:31+01:00">@Html.DisplayFor(model => model.PublishDate)</time> by <a href="@Html.DisplayFor(model => model.SiteAddress)">@Html.DisplayFor(model => model.Author)</a> - @Html.DisplayFor(model => model.Comments.Count) comments
+                    </p>
+                </header>
+                <div>
+                    <p>@Html.DisplayFor(model => model.Content)</p>
+                    @{ if (!String.IsNullOrEmpty(Model.Image))
+                        { <text> <img src="@Model.Image" alt="Error image" /> </text> } }
+                    <br />
+                    @{ if (!String.IsNullOrEmpty(Model.Video))
+                        { <text> <iframe width="560" height="315" src="https://www.youtube.com/embed/@Model.Video" frameborder="0"></iframe> </text> } }
+
+                </div>
+            </article>
+        </section>
+</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="IndexManage">Back to List</a>
+</p>

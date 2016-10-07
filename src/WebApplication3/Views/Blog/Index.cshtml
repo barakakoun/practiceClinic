@@ -1,0 +1,99 @@
+﻿@model IEnumerable<WebApplication3.Models.Post>
+
+@{
+    ViewData["Title"] = "Blog Page";
+}
+<form action="action_page.php">
+    <p>
+        <label for="startdate">Date Range:</label>
+        <input type="date" name="startdate" id="startdate">
+        <input type="date" name="enddate">
+    </p>
+    <p>
+        <label for="authorname">Author Name:</label>
+        <input type="text" name="authorname">
+    </p>
+    <p>
+        <label for="authoremail">Author Email:</label>
+        <input type="email" name="authoremail" id="authoremail" placeholder="for example: barak.k@gmail.com">
+    </p>
+    <p>
+        <label for="postcomments">Comments:</label>
+        <input type="text" name="postcomments">
+    </p>
+    <p>
+        <label for="mincomments">Minimum Comments:</label>
+        <input type="range" name="mincomments" id="mincomments" min="1" max="10" oninput="mincommentsOutput.value = mincomments.value">
+        <!--            trick for showing the current value-->
+        <output name="mincommentsOutput" id="mincommentsOutput"></output>
+    </p>
+    <p>
+        <input type="submit" value="Filter Posts">
+    </p>
+</form>
+
+
+<div id="mainContent">
+@foreach (var currPost in Model)
+{
+    <section>
+        <article class="blogPost">
+            <header>
+                <h2>@currPost.Title</h2>
+                <p>
+                    Posted on
+                    <time datetime="2009-06-29T23:31+01:00">@currPost.PublishDate</time> by <a href="@currPost.SiteAddress">@currPost.Author</a> - <a href="#comments">@currPost.Comments.Count comments</a>
+                </p>
+            </header>
+            <div>
+                <p>@currPost.Content</p>
+                @{ if (!String.IsNullOrEmpty(currPost.Image))
+                    { <text> <img src="@currPost.Image" alt="Error image" /> </text> } }
+
+                @{ if (!String.IsNullOrEmpty(currPost.Video))
+                    { <text> <iframe width="560" height="315" src="https://www.youtube.com/embed/@currPost.Video" frameborder="0"></iframe> </text> } }
+            </div>
+        </article>
+    </section>
+    <section id="comments">
+        <h3>Comments</h3>
+        @foreach (var currComment in currPost.Comments ?? new List<Comment>())
+        {
+            <article>
+                <header>
+                    <a href="@currComment.SiteAddress">@currComment.Author</a>
+                    @currComment.Title
+                </header>
+                <p>@currComment.Content</p>
+            </article>
+        }
+    </section>
+    <form asp-action="CreateComment">
+        <h3>Post a comment</h3>
+        <p>
+            <label for="Author">Author</label>
+            <input name="Author" id="Author" type="text" required />
+        </p>
+        <p>
+            <label for="Title">Title</label>
+            <input name="Title" id="Title" type="text" required />
+        </p>
+        <p>
+            <label for="SiteAddress">SiteAddress</label>
+            <input name="SiteAddress" id="SiteAddress" type="text" />
+        </p>
+        <p>
+            <label for="Content">Content</label>
+            <textarea name="Content" id="Content" required></textarea>
+        </p>
+        <p style="display:none">
+            <label for="PostID">PostID</label>
+            <input name="PostID" id="PostID" type="number" value="@currPost.ID" readonly/>
+        </p>
+        <p>
+            <input type="submit" value="Post comment" />
+        </p>
+    </form>
+}
+</div>
+
