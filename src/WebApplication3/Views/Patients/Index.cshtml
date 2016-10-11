@@ -6,7 +6,11 @@
 
 @section scripts {
     <script type="text/javascript">
-        
+        AddAntiForgeryToken = function (data) {
+            data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
+            return data;
+        };
+
         $('.PatientGroupBy').not('#' + $('input[name=groupBy]:checked', '#groupByForm').val()).hide();
 
 
@@ -26,11 +30,14 @@
         //    $('#confirmDelete').removeClass('dialog-scale');
         //    clearTimeout(transition);
         //});
-        var nIdToDelete;
-        $(".btnDelete").click(function () {
-            nIdToDelete = $(this).parent().parent().parent().parent().attr("id");
+
+
+        var nIdChosen;
+        $(".btnChosen").click(function () {
+            nIdChosen = $(this).parent().parent().parent().parent().attr("id");
+
             //$(".modal-body #bookId").val(myBookId);
-            // As pointed out in comments, 
+            // As pointed out in comments,
             // it is superfluous to have to manually call the modal.
             // $('#addBookDialog').modal('show');
         });
@@ -40,19 +47,19 @@
         });
 
         $("#DeletionConfirmed").click(function () {
-            if (nIdToDelete == null) {
+            if (nIdChosen == null) {
                 alertify.error("Error Occurred");
             }
-            else if (nIdToDelete == 1) {
+            else if (nIdChosen == 1) {
                 alertify.error("Admin cannot be deleted!");
             } else {
                 $.ajax({
                     url: '/Patients/Delete',
-                    type: 'post',
-                    data: { id: nIdToDelete },
+                    type: 'Post',
+                    data: AddAntiForgeryToken({ id: nIdChosen }),
                     success: (function (result) {
 
-                        $("#" + nIdToDelete).hide(500);
+                        $("#" + nIdChosen).hide(500);
                         //$("#countofproducts").text("(" + result + ")");
 
                         //if (result == 0) {
@@ -71,6 +78,40 @@
                 });
             }
         });
+
+
+        //$("#DeletionConfirmed").click(function () {
+        //    if (nIdChosen == null) {
+        //        alertify.error("Error Occurred");
+        //    }
+        //    else if (nIdChosen == 1) {
+        //        alertify.error("Admin cannot be deleted!");
+        //    } else {
+        //        $.ajax({
+        //            url: '/Patients/Delete',
+        //            type: 'Post',
+        //            data: AddAntiForgeryToken({ id: nIdChosen }),
+        //            success: (function (result) {
+
+        //                $("#" + nIdChosen).hide(500);
+        //                //$("#countofproducts").text("(" + result + ")");
+
+        //                //if (result == 0) {
+        //                //    $("#shoppingbag").css("display", "none");
+        //                //    $(".main-content").append($("<div>").text('לא קיימים פריטים בסל הקניות'));
+        //                //}
+
+        //                //var sum = $("#sum").text();
+        //                //$("#sum").text(sum - str[1])
+
+        //                alertify.success("The patient was deleted");
+        //            }),
+        //            error: (function (xhr, status) {
+        //                alertify.error("Delete failed");
+        //            })
+        //        });
+        //    }
+        //});
 
         //$("#buy").click(function () {
 
@@ -137,7 +178,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-
+<form id="__AjaxAntiForgeryForm" action="#" method="post"> @Html.AntiForgeryToken()</form>
 
 <div class="btn-group" data-toggle="buttons" id="groupByForm">
     <label class="btn btn-primary active">
@@ -147,25 +188,12 @@
         <input type="radio" name="groupBy" class="CgroupBy" value="BirthdayGroupBy" autocomplete="off"> Birthday
     </label>
     <label class="btn btn-primary">
-        <input type="radio" name="groupBy" class="CgroupBy" value="FirstNameGroupBy" autocomplete="off"> First Name
+        <input type="radio" name="groupBy" class="CgroupBy" value="LastNameGroupBy" autocomplete="off"> Last Name
     </label>
 </div>
 
-@*<form id="groupByForm">
-    <input type="radio" name="groupBy" value="regularPatientView" checked> Regular <br>
-    <input type="radio" name="groupBy" value="BirthdayGroupBy"> Birthday<br>
-    <input type="radio" name="groupBy" value="FirstNameGroupBy"> First Name
-</form>*@
-
-
 <table class="table PatientGroupBy" id="regularPatientView">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Birthday)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstName)
         </th>
@@ -173,62 +201,69 @@
             @Html.DisplayNameFor(model => model.LastName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Password)
+            @Html.DisplayNameFor(model => model.Birthday)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Phone)
         </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.DrugAllergies)
+        </th>*@
         <th></th>
     </tr>
-    
-@foreach (var item in Model) {
-    <tr id="@item.ID">
-        <td>
-            @Html.DisplayFor(modelItem => item.Birthday)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Password)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Phone)
-        </td>
-        <td>
-            
-            @*לנסות את זה!!!*@
-            <div class="btn-group" role="group">
-                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Options
-                </button>
-                <div class="dropdown-menu" role="group">
-                    <button type="button" class="btn btn-outline-success btn-sm dropdown-item" id="btnDetails">Details</button>
-                    <button type="button" class="btn btn-outline-info btn-sm dropdown-item" id="btnEdit">Edit</button>
-                    <button type="button" class="btn btn-outline-danger btn-sm btnDelete dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
-                    <button type="button" class="btn btn-outline-warning btn-sm dropdown-item" id="btnProcedure">Prodcedure</button>
-                </div>
-            </div>
 
-            @*<div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-success btn-sm" id="btnDetails">Details</button>
-                <button type="button" class="btn btn-outline-info btn-sm" id="btnEdit">Edit</button>
-                <button type="button" class="btn btn-outline-danger btn-sm btnDelete" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
-                <button type="button" class="btn btn-outline-warning btn-sm" id="btnProcedure">Prodcedure</button>
-            </div>*@
-            @*<a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a> |
-            <a asp-controller="Procedures" asp-action="Create" asp-route-PatientID="@item.ID">Schedual New Prodcedure</a>*@
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr id="@item.ID">
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Birthday)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            @*<td>
+                @Html.ListBox("ID", new SelectList(item.DrugAllergies, "ID", "Name"))
+            </td>*@
+            <td>
+
+                @*לנסות את זה!!!*@
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Options
+                    </button>
+                    <div class="dropdown-menu" role="group">
+                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
+                        <button type="button" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm btnChosen dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
+                        <button type="button" class="btn btn-outline-warning btn-sm btnChosen dropdown-item" id="btnProcedure">Prodcedure</button>
+                    </div>
+                </div>
+
+                @*<div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="btnDetails">Details</button>
+                        <button type="button" class="btn btn-outline-info btn-sm" id="btnEdit">Edit</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm btnDelete" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
+                        <button type="button" class="btn btn-outline-warning btn-sm" id="btnProcedure">Prodcedure</button>
+                    </div>*@
+                @*<a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a> |
+                    <a asp-controller="Procedures" asp-action="Create" asp-route-PatientID="@item.ID">Schedual New Prodcedure</a>*@
+            </td>
+        </tr>
+    }
 </table>
 <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -244,78 +279,133 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="DeletionConfirmed">Delete</button>
+                <button type="button" class="btn btn-primary" id="DeletionConfirmed" data-dismiss="modal">Delete</button>
             </div>
         </div>
     </div>
 </div>
-@*<dialog id="confirmDelete" class="site-dialog">
-    <header class="dialog-header">
-        <h1>Please Confirm</h1>
-    </header>
-    <div class="dialog-content">
-        <p>You are about to close your account. This action is irreversible. It will permanently delete your account along with its associated data. Are you sure you want to continue?</p>
-    </div>
-    <div class="btn-group cf">
-        <button class="btn btn-danger" id="delete">Delete</button>
-        <button class="btn btn-cancel" id="cancelDelete">Cancel</button>
 
-    </div>
-</dialog>*@
-<ul class="PatientGroupBy" id="FirstNameGroupBy">
-    @foreach (var group in Model.GroupBy(model => model.FirstName)) {
 
-    <li>
-       @Html.Encode(group.Key)
-        <ul>
+<table class="table PatientGroupBy" id="LastNameGroupBy">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Birthday)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Phone)
+        </th>
+        <th></th>
+    </tr>
 
-            @foreach (var item in group) {
-            <li>@Html.Encode(item.LastName)</li>
-            }
+    @foreach (var group in Model.GroupBy(model => model.LastName))
+    {
 
-        </ul>
-    </li>
+        @foreach (var item in group)
+        {
+            <tr id="@Html.Encode(item.ID)">
+                <td>
+                    @Html.Encode(item.FirstName)
+                </td>
+                <td>
+                    @Html.Encode(group.Key)
+                </td>
+                <td>
+
+                    @String.Format(@"{0:dd\/MM\/yyyy}", item.Birthday)
+                </td>
+                <td>
+                    @Html.Encode(item.Email)
+                </td>
+                <td>
+                    @Html.Encode(item.Phone)
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options
+                        </button>
+                        <div class="dropdown-menu" role="group">
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
+                            <button type="button" class="btn btn-outline-info btn-sm dropdown-item btnChosen" id="btnEdit">Edit</button>
+                            <button type="button" class="btn btn-outline-warning btn-sm dropdown-item btnChosen" id="btnProcedure">Prodcedure</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
     }
-</ul>
+</table>
 
 
-<ul class="PatientGroupBy" id="BirthdayGroupBy">
+<table class="table PatientGroupBy" id="BirthdayGroupBy">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Birthday)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Phone)
+        </th>
+        <th></th>
+    </tr>
+
     @foreach (var group in Model.GroupBy(model => model.Birthday))
     {
 
-        <li>
-            @Html.Encode(group.Key)
-            <ul>
-
-                @foreach (var item in group)
-                {
-                    <li>@Html.Encode(item.FirstName)</li>
-                }
-
-            </ul>
-        </li>
+        @foreach (var item in group)
+        {
+            <tr id="@Html.Encode(item.ID)">
+                <td>
+                    @Html.Encode(item.FirstName)
+                </td>
+                <td>
+                    @Html.Encode(item.LastName)
+                </td>
+                <td>
+                    @String.Format(@"{0:dd\/MM\/yyyy}", group.Key)
+                </td>
+                <td>
+                    @Html.Encode(item.Email)
+                </td>
+                <td>
+                    @Html.Encode(item.Phone)
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options
+                        </button>
+                        <div class="dropdown-menu" role="group">
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
+                            <button type="button" class="btn btn-outline-info btn-sm dropdown-item btnChosen" id="btnEdit">Edit</button>
+                            <button type="button" class="btn btn-outline-warning btn-sm dropdown-item btnChosen" id="btnProcedure">Prodcedure</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
     }
-</ul>
+</table>
 
 
-@*<div id="deleteModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
 
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
-            </div>
-            <div class="modal-body">
-                <p>Some text in the modal.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
 
-    </div>
-</div>*@
 
 

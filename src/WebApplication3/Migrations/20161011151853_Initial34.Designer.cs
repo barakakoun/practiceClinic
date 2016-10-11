@@ -8,9 +8,10 @@ using WebApplication3.Models;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161011151853_Initial34")]
+    partial class Initial34
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -171,7 +172,11 @@ namespace WebApplication3.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<int?>("DrugID");
+
                     b.Property<string>("Name");
+
+                    b.Property<int?>("PatientID");
 
                     b.HasKey("ID");
                 });
@@ -190,20 +195,6 @@ namespace WebApplication3.Migrations
                     b.Property<string>("LastName");
 
                     b.Property<int>("Seniority");
-
-                    b.HasKey("ID");
-                });
-
-            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int?>("PatientID");
 
                     b.HasKey("ID");
                 });
@@ -328,8 +319,12 @@ namespace WebApplication3.Migrations
                         .HasForeignKey("PostID");
                 });
 
-            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
+            modelBuilder.Entity("WebApplication3.Models.Drug", b =>
                 {
+                    b.HasOne("WebApplication3.Models.Drug")
+                        .WithMany()
+                        .HasForeignKey("DrugID");
+
                     b.HasOne("WebApplication3.Models.Patient")
                         .WithMany()
                         .HasForeignKey("PatientID");

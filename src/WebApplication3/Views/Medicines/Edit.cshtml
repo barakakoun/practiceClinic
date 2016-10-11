@@ -1,4 +1,4 @@
-@model WebApplication3.Models.Drug
+@model WebApplication3.Models.Medicine
 
 @{
     ViewData["Title"] = "Edit";
@@ -8,7 +8,7 @@
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>Drug</h4>
+        <h4>Medicine</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="ID" />

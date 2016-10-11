@@ -8,9 +8,10 @@ using WebApplication3.Models;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161011185456_Initial42")]
+    partial class Initial42
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -146,6 +147,20 @@ namespace WebApplication3.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUsers");
                 });
 
+            modelBuilder.Entity("WebApplication3.Models.Book", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("PatientID");
+
+                    b.Property<DateTime>("PublishedDate");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("ID");
+                });
+
             modelBuilder.Entity("WebApplication3.Models.Comment", b =>
                 {
                     b.Property<int>("ID")
@@ -190,20 +205,6 @@ namespace WebApplication3.Migrations
                     b.Property<string>("LastName");
 
                     b.Property<int>("Seniority");
-
-                    b.HasKey("ID");
-                });
-
-            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int?>("PatientID");
 
                     b.HasKey("ID");
                 });
@@ -321,18 +322,18 @@ namespace WebApplication3.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("WebApplication3.Models.Book", b =>
+                {
+                    b.HasOne("WebApplication3.Models.Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientID");
+                });
+
             modelBuilder.Entity("WebApplication3.Models.Comment", b =>
                 {
                     b.HasOne("WebApplication3.Models.Post")
                         .WithMany()
                         .HasForeignKey("PostID");
-                });
-
-            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
-                {
-                    b.HasOne("WebApplication3.Models.Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientID");
                 });
 
             modelBuilder.Entity("WebApplication3.Models.Procedure", b =>

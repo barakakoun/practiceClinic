@@ -16,10 +16,14 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Procedures
-        public IActionResult Index()
+        public IActionResult Index(int? nPatient)
         {
-            var query = _context.Procedures.GroupBy(p => p.PatientID);
-            return View(_context.Procedures.ToList());
+            //var query = _context.Procedures.GroupBy(p => p.PatientID);
+            if (nPatient == null)
+            {
+                return View(_context.Procedures.ToList());
+            }
+            return View(_context.Procedures.Where(p => p.PatientID == nPatient).ToList());
         }
 
         // GET: Procedures/Details/5

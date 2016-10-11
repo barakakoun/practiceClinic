@@ -6,22 +6,22 @@ using WebApplication3.Models;
 
 namespace WebApplication3.Controllers
 {
-    public class ProcedureTypesController : Controller
+    public class MedicinesController : Controller
     {
         private ApplicationDbContext _context;
 
-        public ProcedureTypesController(ApplicationDbContext context)
+        public MedicinesController(ApplicationDbContext context)
         {
             _context = context;    
         }
 
-        // GET: ProcedureTypes
+        // GET: Medicines
         public IActionResult Index()
         {
-            return View(_context.ProcedureTypes.ToList());
+            return View(_context.Medicines.ToList());
         }
 
-        // GET: ProcedureTypes/Details/5
+        // GET: Medicines/Details/5
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -29,36 +29,36 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
-            if (procedureType == null)
+            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            if (Medicine == null)
             {
                 return HttpNotFound();
             }
 
-            return View(procedureType);
+            return View(Medicine);
         }
 
-        // GET: ProcedureTypes/Create
+        // GET: Medicines/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: ProcedureTypes/Create
+        // POST: Medicines/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProcedureType procedureType)
+        public IActionResult Create(Medicine Medicine)
         {
             if (ModelState.IsValid)
             {
-                _context.ProcedureTypes.Add(procedureType);
+                _context.Medicines.Add(Medicine);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(procedureType);
+            return View(Medicine);
         }
 
-        // GET: ProcedureTypes/Edit/5
+        // GET: Medicines/Edit/5
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -66,29 +66,29 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
-            if (procedureType == null)
+            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            if (Medicine == null)
             {
                 return HttpNotFound();
             }
-            return View(procedureType);
+            return View(Medicine);
         }
 
-        // POST: ProcedureTypes/Edit/5
+        // POST: Medicines/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(ProcedureType procedureType)
+        public IActionResult Edit(Medicine Medicine)
         {
             if (ModelState.IsValid)
             {
-                _context.Update(procedureType);
+                _context.Update(Medicine);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(procedureType);
+            return View(Medicine);
         }
 
-        // GET: ProcedureTypes/Delete/5
+        // GET: Medicines/Delete/5
         [ActionName("Delete")]
         public IActionResult Delete(int? id)
         {
@@ -97,31 +97,24 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
-            if (procedureType == null)
+            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            if (Medicine == null)
             {
                 return HttpNotFound();
             }
 
-            return View(procedureType);
+            return View(Medicine);
         }
 
-        // POST: ProcedureTypes/Delete/5
+        // POST: Medicines/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
-            _context.ProcedureTypes.Remove(procedureType);
+            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            _context.Medicines.Remove(Medicine);
             _context.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        // GET: ProcedureTypes/PriceByID/5
-        [ActionName("PriceByID")]
-        public int getPriceByID(int nTypeID)
-        {
-            return (_context.ProcedureTypes.Single(m => m.ID == nTypeID).Price);
         }
     }
 }

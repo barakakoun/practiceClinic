@@ -11,11 +11,14 @@ namespace WebApplication3.Models
     {
         public int ID { get; set; }
 
+
+        [Display(Name = "Procedure Type")]
         public int ProcedureTypeID { get; set; }
 
+        [Display(Name = "Patient")]
         public int PatientID { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime Time { get; set; }
 
 

@@ -3,11 +3,15 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using WebApplication3.Models;
+using WebApplication3.ActionFilters;
 using WebApplication3.Services;
 using Microsoft.AspNet.Http;
+using System.Collections.Generic;
+using System;
 
 namespace WebApplication3.Controllers
 {
+    [NewActionFilters]
     public class PatientsController : Controller
     {
         private ApplicationDbContext _context;
@@ -20,8 +24,9 @@ namespace WebApplication3.Controllers
         // GET: Patients
         public IActionResult Index()
         {
-            var query = _context.Patients.GroupBy(p => p.Birthday);
-            return View(_context.Patients.ToList());
+            //var query = _context.Patients.GroupBy(p => p.Birthday);
+            var patients = _context.Patients.Include(p => p.MedicineAllergies);
+            return View(patients.ToList());
         }
 
         // GET: Patients/Details/5
@@ -32,7 +37,8 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            Patient patient = _context.Patients.Single(m => m.ID == id);
+            //Patient patient = _context.Patients.Include(d => d.PatientDrugs).Include(d => d.Prucedures).Single(m => m.ID == id);
+            Patient patient = _context.Patients.Include(d => d.Prucedures).Single(m => m.ID == id);
             if (patient == null)
             {
                 return HttpNotFound();
@@ -44,13 +50,42 @@ namespace WebApplication3.Controllers
         // GET: Patients/Create
         public IActionResult Create()
         {
-            return View();
+            //ViewBag.ProcedureTypeID = new SelectList(_context.ProcedureTypes, "ID", "Name", ProcedureTypeID);
+            var list = _context.Drugs.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            ViewBag.Roles = list;
+
+            var categories = _context.Drugs.Select(c => new {
+                CategoryID = c.ID,
+                CategoryName = c.Name
+            }).ToList();
+            ViewBag.Categories = new MultiSelectList(categories, "CategoryID", "CategoryName");
+
+            var allergies = _context.Medicines.Select(c => new {
+                ID = c.ID,
+                Name = c.Name
+            }).ToList();
+
+            ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name");
+
+            Patient tryhi = new Patient();
+
+            //List<spGetTagsOfDocument_Result> tags = db.spGetTagsOfDocument(documentId).ToList();
+
+            //foreach (spGetTagsOfDocument_Result tag in tags)
+            //{
+            //    model.selectedTags.Add(tag.TagName);
+            //}
+
+
+
+            return View(tryhi);
+            //return View();
         }
 
         // POST: Patients/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Patient patient)
+        public IActionResult Create(Patient patient, string arrAllergies)
         {
             if (_context.Patients.Any())
             {
@@ -79,9 +114,20 @@ namespace WebApplication3.Controllers
 
             if (ModelState.IsValid)
             {
+                if (arrAllergies != null)
+                {
+                    IEnumerable<int> lstMedsIds = arrAllergies.Split(',').Select(curr => Int32.Parse(curr));
+
+                    List<Medicine> med = _context.Medicines.Where(t => lstMedsIds.Contains(t.ID)).ToList();
+
+                    patient.MedicineAllergies = med;
+                }
                 _context.Patients.Add(patient);
                 _context.SaveChanges();
-                Services.SessionExtensions.SetObjectAsJson(HttpContext.Session, "patient", patient);
+                if (Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient") == null)
+                {
+                    Services.SessionExtensions.SetObjectAsJson(HttpContext.Session, "patient", patient);
+                }
                 return RedirectToAction("Index", "Home");
             }
 
@@ -91,6 +137,34 @@ namespace WebApplication3.Controllers
         // GET: Patients/Edit/5
         public IActionResult Edit(int? id)
         {
+            //if (id == null)
+            //{
+            //    return HttpNotFound();
+            //}
+
+            //var PatientsViewModel = new PatientsViewModel
+            //{
+            //    Patient = _context.Patients.Include(i => i.DrugAllergies).First(i => i.ID == id),
+            //    //Patient = _context.Patients.Include(i => i.PatientDrugs).First(i => i.ID == id),
+            //};
+
+            //if (PatientsViewModel.Patient == null)
+            //    return HttpNotFound();
+
+            //var allDrugAllergiesList = _context.Drugs.ToList();
+            //PatientsViewModel.AllDrugAllergies = allDrugAllergiesList.Select(o => new SelectListItem
+            //{
+            //    Text = o.Name,
+            //    Value = o.ID.ToString()
+            //});
+
+            ////ViewBag.EmployerID =
+            ////        new SelectList(db.Employers, "Id", "FullName", jobpostViewModel.JobPost.EmployerID);
+
+            //return View(PatientsViewModel);
+
+
+
             if (id == null)
             {
                 return HttpNotFound();
@@ -134,6 +208,26 @@ namespace WebApplication3.Controllers
             }
 
             return View(patient);
+        }
+
+        // GET: Medicine/5
+        [ActionName("Medicine")]
+        public List<Medicine> Medicine(int[] arrayOfValues)
+        {
+            //if (id == null)
+            //{
+            //    return HttpNotFound();
+            //}
+
+            //Medicine med = _context.Medicines.Single(m => m.ID == id);
+
+            List<Medicine> med = _context.Medicines.Where(t => arrayOfValues.Contains(t.ID)).ToList();
+            //if (med == null)
+            //{
+            //    return HttpNotFound();
+            //}
+
+            return med;
         }
 
         // POST: Patients/Delete/5

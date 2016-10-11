@@ -8,9 +8,10 @@ using WebApplication3.Models;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161011175841_Initial40")]
+    partial class Initial40
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -194,20 +195,6 @@ namespace WebApplication3.Migrations
                     b.HasKey("ID");
                 });
 
-            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int?>("PatientID");
-
-                    b.HasKey("ID");
-                });
-
             modelBuilder.Entity("WebApplication3.Models.Patient", b =>
                 {
                     b.Property<int>("ID")
@@ -227,6 +214,8 @@ namespace WebApplication3.Migrations
 
                     b.Property<string>("Phone")
                         .HasAnnotation("MaxLength", 10);
+
+                    b.Property<int>("Try");
 
                     b.HasKey("ID");
                 });
@@ -326,13 +315,6 @@ namespace WebApplication3.Migrations
                     b.HasOne("WebApplication3.Models.Post")
                         .WithMany()
                         .HasForeignKey("PostID");
-                });
-
-            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
-                {
-                    b.HasOne("WebApplication3.Models.Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientID");
                 });
 
             modelBuilder.Entity("WebApplication3.Models.Procedure", b =>

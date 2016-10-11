@@ -115,54 +115,8 @@
             </div>
         </div>
 
-        <input type="hidden" name="arrAllergies" id="arrAllergies" value="1" />
-
-        @*<div class="form-group">
-            <label asp-for="MedicineAllergies" class="col-md-4 control-label"></label>
-            <div class="col-md-5 inputGroupContainer">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-certificate"></i></span>
-                    @Html.ListBoxFor(
-                        m => m.MedicineAllergies,
-                        ViewBag.Allergies as MultiSelectList,
-                        new { style = "display:block;" , data_placeholder = "Choose a Medicine..." }
-                    )
-                </div>
-                <span asp-validation-for="MedicineAllergies" class="text-danger " />
-            </div>
-        </div>*@
-        @*@Html.ListBoxFor(
-                        m => m.MedicineAllergies,
-                        ViewBag.Allergies as MultiSelectList,
-                        new { @class = "chzn-select", data_placeholder = "Choose a Medicine..." }
-                    )*@
-
-
-        <div>
-            <input id="btnAddBook" type="button"
-                   onclick="addRow();" value="Add Book" />
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <td>
-                        Name
-                    </td>
-                </tr>
-            </thead>
-            <tbody id="tbBooks"></tbody>
-        </table>
-
-
-        @Html.ListBox(
-            "Allergies",
-            ViewBag.Allergies as MultiSelectList,
-            new { @class = "chzn-select", data_placeholder = "Choose a Medicine..." }
-        )
-
-
-        @*@Html.DropDownList("CategoryId", (MultiSelectList)ViewBag.Categories, new { multiple = "multiple" })
-        @Html.DropDownList("RoleName", (IEnumerable<SelectListItem>)ViewBag.Roles, "please select ...", new { @class = "form-control search-select", @multiple = "multiple" })*@
+        @Html.DropDownList("CategoryId", (MultiSelectList)ViewBag.Categories, new { multiple = "multiple" })
+        @Html.DropDownList("RoleName", (IEnumerable<SelectListItem>)ViewBag.Roles, "please select ...", new { @class = "form-control search-select", @multiple = "multiple" })
 
             @*<div class="form-group">
                 <label asp-for="Password" class="col-md-2 control-label"></label>
@@ -175,7 +129,7 @@
         <div class="form-group">
             <label class="col-md-4 control-label"></label>
             <div class="col-md-4">
-                <button type="submit" class="btn btn-warning" id="subFinal">Create <span class="glyphicon glyphicon-send"></span></button>
+                <button type="submit" class="btn btn-warning">Create <span class="glyphicon glyphicon-send"></span></button>
             </div>
         </div>
     </fieldset>
@@ -198,60 +152,8 @@
             }
         });
 
-
-        $("#subFinal").on('click', function (e) {
-            $("#arrAllergies").val($("#Allergies").val());
-        });
-        
         //$("#regPhone").mask("059-9999999");
         /05([0-9]{8})/
-
-        function addRow() {
-
-            var chosenMedicines = $("#Allergies").val();
-            jQuery.ajaxSettings.traditional = true;
-            @*$.get("/Patients/Medicine", { arrayOfValues: chosenMedicines }, function (data, status) {
-                var hi = "hi";
-                @{
-                    Model.MedicineAllergies.Add(new Medicine());
-                }
-            });*@
-
-            @*for (var i = 0; i < chosenMedicines.length; i++) {
-                $.get("/Patients/Medicine/" + chosenMedicines[i], function (data, status) {
-                    var hi = "hi";
-                @{
-                    Model.MedicineAllergies.Add(new Medicine());
-                }
-                });
-            }*@
-
-
-            @*$.get("/Patients/Medicine", { id: chosenMedicine }, function (data, status) {
-                @{
-                    Model.MedicineAllergies.Add(new Medicine());
-                }
-            });*@
-
-            @*@{
-                Model.MedicineAllergies.Add(new MedicineAllergies());
-            }*@
-
-            //var index = $("#tbBooks").children("tr").length;
-
-            //var indexCell = "<td style=\"display:none\"><input name=\"Books.Index\"type='hidden' value='" + index + "' /></td>";
-            //var titleCell = "<td><input id='Books_" + index + "__Title' name='Books[" + index + "].Title' type='text' value='' /></td>";
-            //var publishedCell = "<td><input id='Books_" + index + "__Title' name='Books[" + index + "].PublishedDate' type='text' value='' /></td>";
-            //var removeCell = "<td><input id='btnAddBook' type='button' value='Remove' onclick='removeRow(" + index + ");' /></td>";
-
-            //var newRow = "<tr id='trBook" + index + "'>" + indexCell + titleCell + publishedCell + removeCell + "</tr>";
-            //$("#tbBooks").append(newRow);
-        }
-
-        function removeRow(id) {
-            var controlToBeRemoved = "#trBook" + id;
-            $(controlToBeRemoved).remove();
-        }
 
 
     </script>

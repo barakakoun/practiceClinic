@@ -1,2 +1,0 @@
-# practiceClinic
-Dentist practice clinic
