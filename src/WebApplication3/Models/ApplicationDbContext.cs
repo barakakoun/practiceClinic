@@ -18,20 +18,22 @@ namespace WebApplication3.Models
         public DbSet<ProcedureType> ProcedureTypes { get; set; }
         public DbSet<Procedure> Procedures { get; set; }
         public DbSet<Patient> Patients { get; set; }
-        public DbSet<Drug> Drugs { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<Medicine_Patient> Medicine_Patients { get; set; }
         //public DbSet<PatientDrug> PatientDrugs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+
             //builder.Entity<ProductCategory>().HasKey(x => new { x.ProductId, x.CategoryId });
 
             //modelBuilder.Entity<ProductCategory>()
             //    .HasOne(pc => pc.Product)
             //    .WithMany(p => p.ProductCategories)
             //    .HasForeignKey(pc => pc.ProductId);
+
+
 
             //modelBuilder.Entity<ProductCategory>()
             //    .HasOne(pc => pc.Category)
@@ -54,6 +56,7 @@ namespace WebApplication3.Models
             //    .HasOne(pt => pt.Patient)
             //    .WithMany(p => p.PatientDrugs)
             //    .HasForeignKey(pt => pt.PatientID);
+            
 
             //builder.Entity<PatientDrug>()
             //    .HasOne(pt => pt.Drug)

@@ -8,6 +8,20 @@ Idan Doron 206021800
 ------------------------------*/
 
 
+#arrAllergies {
+    max-width: 218px;
+    max-height: 67px;
+    overflow: auto;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.tdGroupByChosen {
+    font-weight: bolder;
+    color: red;
+}
+
+
 #success_message{ display: none;}
 
 #navbarTitle {
@@ -153,6 +167,7 @@ p {
 
 #content {
 	display: table;
+        width: 65%;
 }
 
 	#mainContent {

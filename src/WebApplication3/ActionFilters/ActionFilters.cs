@@ -17,7 +17,7 @@ namespace WebApplication3.ActionFilters
             if (filterContext.ActionDescriptor.DisplayName.Equals("WebApplication3.Controllers.PatientsController.Create") && filterContext.ModelState.IsValid)
             {
                 //List<Medicine> curr = ((Patient)filterContext.ActionArguments["patient"]).MedicineAllergies;
-                List<Medicine> curr = null;
+                //List<Medicine> curr = null;
             }
             Log("OnActionExecuting", filterContext.RouteData);
             var foo = filterContext.RouteData.Values["foo"];

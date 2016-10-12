@@ -10,21 +10,24 @@
     <fieldset>
         <legend>Create New Patient</legend>
             <hr />
-            @*<div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>*@
         <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
-        @*<div class="form-group">
-            <label asp-for="FirstName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger" />
+        <div class="form-group">
+            <label asp-for="Identifier" class="col-md-4 control-label"></label>
+            <div class="col-md-5 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input asp-for="Identifier" id="regIdentifier" placeholder="123456789" class="form-control inputNumberOnly">
+                </div>
+                <span asp-validation-for="Identifier" class="text-danger" />
             </div>
-        </div>*@
+        </div>
+
         <div class="form-group">
             <label asp-for="FirstName" class="col-md-4 control-label"></label>
             <div class="col-md-5 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input asp-for="FirstName" placeholder="First Name" class="form-control">
+                    <input asp-for="FirstName" id="regFirst" placeholder="Israel" class="form-control patientNameInput" type="text">
                 </div>
                 <span asp-validation-for="FirstName" class="text-danger" />
             </div>
@@ -35,18 +38,11 @@
             <div class="col-md-5 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input asp-for="LastName" placeholder="Last Name" class="form-control" type="text">
+                    <input asp-for="LastName" id="regLast" placeholder="Israeli" class="form-control patientNameInput" type="text">
                 </div>
                 <span asp-validation-for="LastName" class="text-danger" />
             </div>
         </div>
-            @*<div class="form-group">
-                <label asp-for="LastName" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger" />
-                </div>
-            </div>*@
         <div class="form-group">
             <label asp-for="Email" class="col-md-4 control-label"></label>
             <div class="col-md-5 inputGroupContainer">
@@ -57,13 +53,6 @@
                 <span asp-validation-for="Email" class="text-danger" />
             </div>
         </div>
-            @*<div class="form-group">
-                <label asp-for="Email" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="Email" id="regEmail" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger" />
-                </div>
-            </div>*@
 
         <div class="form-group">
             <label asp-for="Birthday" class="col-md-4 control-label"></label>
@@ -75,30 +64,12 @@
                 <span asp-validation-for="Birthday" class="text-danger" />
             </div>
         </div>
-            @*<div class="form-group">
-                <label asp-for="Birthday" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="Birthday" type="date" class="form-control" />
-                    <span asp-validation-for="Birthday" class="text-danger" />
-                </div>
-            </div>*@
-
-        @*<div class="form-group">
-            <label class="col-md-4 control-label">Phone #</label>
-            <div class="col-md-5 inputGroupContainer">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
-                    <input name="phone" placeholder="(845)555-1212" class="form-control" type="text">
-                </div>
-            </div>
-        </div>*@
-
             <div class="form-group">
                 <label asp-for="Phone" class="col-md-4 control-label"></label>
                 <div class="col-md-5 inputGroupContainer">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
-                        <input asp-for="Phone" id="regPhone" placeholder="0541234567" class="form-control" />
+                        <input asp-for="Phone" id="regPhone" placeholder="0541234567" class="form-control inputNumberOnly" />
                     </div>
                     <span asp-validation-for="Phone" class="text-danger " />
                 </div>
@@ -115,62 +86,12 @@
             </div>
         </div>
 
-        <input type="hidden" name="arrAllergies" id="arrAllergies" value="1" />
-
-        @*<div class="form-group">
-            <label asp-for="MedicineAllergies" class="col-md-4 control-label"></label>
-            <div class="col-md-5 inputGroupContainer">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-certificate"></i></span>
-                    @Html.ListBoxFor(
-                        m => m.MedicineAllergies,
-                        ViewBag.Allergies as MultiSelectList,
-                        new { style = "display:block;" , data_placeholder = "Choose a Medicine..." }
-                    )
-                </div>
-                <span asp-validation-for="MedicineAllergies" class="text-danger " />
+        <div class="form-group">
+            <label class="col-md-4 control-label">Medicine Allergies</label>
+            <div class="col-md-5">
+                @Html.ListBox("Allergies", ViewBag.Allergies as MultiSelectList, new { id = "arrAllergies", name = "arrAllergies", title = "Hold Ctrl for multiple items" })
             </div>
-        </div>*@
-        @*@Html.ListBoxFor(
-                        m => m.MedicineAllergies,
-                        ViewBag.Allergies as MultiSelectList,
-                        new { @class = "chzn-select", data_placeholder = "Choose a Medicine..." }
-                    )*@
-
-
-        <div>
-            <input id="btnAddBook" type="button"
-                   onclick="addRow();" value="Add Book" />
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <td>
-                        Name
-                    </td>
-                </tr>
-            </thead>
-            <tbody id="tbBooks"></tbody>
-        </table>
-
-
-        @Html.ListBox(
-            "Allergies",
-            ViewBag.Allergies as MultiSelectList,
-            new { @class = "chzn-select", data_placeholder = "Choose a Medicine..." }
-        )
-
-
-        @*@Html.DropDownList("CategoryId", (MultiSelectList)ViewBag.Categories, new { multiple = "multiple" })
-        @Html.DropDownList("RoleName", (IEnumerable<SelectListItem>)ViewBag.Roles, "please select ...", new { @class = "form-control search-select", @multiple = "multiple" })*@
-
-            @*<div class="form-group">
-                <label asp-for="Password" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger" />
-                </div>
-            </div>*@
 
         <div class="form-group">
             <label class="col-md-4 control-label"></label>
@@ -197,62 +118,24 @@
                 $(this).val(val.replace(/[\u0591-\u05F4]/, ''));
             }
         });
-
-
-        $("#subFinal").on('click', function (e) {
-            $("#arrAllergies").val($("#Allergies").val());
+        $(".inputNumberOnly").on('keyup', function (e) {
+            var val = $(this).val();
+            if (val.match(/[^0-9]/)) {
+                $(this).val(val.replace(/[^0-9]/, ''));
+            }
         });
+
+        $(".patientNameInput").on('keyup', function (e) {
+            var val = $(this).val();
+            if (val.match(/[^A-Za-z\u0591-\u05F4"-']/)) {
+                $(this).val(val.replace(/[^A-Za-z\u0591-\u05F4"-']/, ''));
+            }
+        });
+
+        //$("#arrAllergies").on('click', function (e) {
+        //    var val = $(this).val();
+        //});
         
-        //$("#regPhone").mask("059-9999999");
-        /05([0-9]{8})/
-
-        function addRow() {
-
-            var chosenMedicines = $("#Allergies").val();
-            jQuery.ajaxSettings.traditional = true;
-            @*$.get("/Patients/Medicine", { arrayOfValues: chosenMedicines }, function (data, status) {
-                var hi = "hi";
-                @{
-                    Model.MedicineAllergies.Add(new Medicine());
-                }
-            });*@
-
-            @*for (var i = 0; i < chosenMedicines.length; i++) {
-                $.get("/Patients/Medicine/" + chosenMedicines[i], function (data, status) {
-                    var hi = "hi";
-                @{
-                    Model.MedicineAllergies.Add(new Medicine());
-                }
-                });
-            }*@
-
-
-            @*$.get("/Patients/Medicine", { id: chosenMedicine }, function (data, status) {
-                @{
-                    Model.MedicineAllergies.Add(new Medicine());
-                }
-            });*@
-
-            @*@{
-                Model.MedicineAllergies.Add(new MedicineAllergies());
-            }*@
-
-            //var index = $("#tbBooks").children("tr").length;
-
-            //var indexCell = "<td style=\"display:none\"><input name=\"Books.Index\"type='hidden' value='" + index + "' /></td>";
-            //var titleCell = "<td><input id='Books_" + index + "__Title' name='Books[" + index + "].Title' type='text' value='' /></td>";
-            //var publishedCell = "<td><input id='Books_" + index + "__Title' name='Books[" + index + "].PublishedDate' type='text' value='' /></td>";
-            //var removeCell = "<td><input id='btnAddBook' type='button' value='Remove' onclick='removeRow(" + index + ");' /></td>";
-
-            //var newRow = "<tr id='trBook" + index + "'>" + indexCell + titleCell + publishedCell + removeCell + "</tr>";
-            //$("#tbBooks").append(newRow);
-        }
-
-        function removeRow(id) {
-            var controlToBeRemoved = "#trBook" + id;
-            $(controlToBeRemoved).remove();
-        }
-
-
+        
     </script>
 }

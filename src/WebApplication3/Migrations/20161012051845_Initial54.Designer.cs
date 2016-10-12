@@ -8,9 +8,10 @@ using WebApplication3.Models;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161012051845_Initial54")]
+    partial class Initial54
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -160,6 +161,18 @@ namespace WebApplication3.Migrations
                     b.Property<string>("SiteAddress");
 
                     b.Property<string>("Title");
+
+                    b.HasKey("ID");
+                });
+
+            modelBuilder.Entity("WebApplication3.Models.Drug", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Name");
 
                     b.HasKey("ID");
                 });
@@ -336,10 +349,6 @@ namespace WebApplication3.Migrations
 
             modelBuilder.Entity("WebApplication3.Models.Medicine_Patient", b =>
                 {
-                    b.HasOne("WebApplication3.Models.Medicine")
-                        .WithMany()
-                        .HasForeignKey("MedicineID");
-
                     b.HasOne("WebApplication3.Models.Patient")
                         .WithMany()
                         .HasForeignKey("PatientID");

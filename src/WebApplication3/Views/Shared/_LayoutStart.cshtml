@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap37.min.css">
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">*@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrapValidator.css" crossorigin="anonymous">
     <link rel="stylesheet" href="~/lib/alertify/css/alertify.core.css">
     <link rel="stylesheet" href="~/lib/alertify/css/alertify.default.css">
@@ -36,7 +37,13 @@
                 <li class="nav-item"><a class="nav-link" asp-controller="Patients" asp-action="Index">Patients</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Procedures" asp-action="Index">Procedures</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="ProcedureTypes" asp-action="Index">Procedure Types</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Drugs" asp-action="Index">Drugs</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Medicines" asp-action="Index">Medicines</a></li>
+            }
+            else if (currPatient != null)
+            {
+                <li class="nav-item"><a class="nav-link" asp-controller="Patients" asp-action="Edit" asp-route-id="@currPatient.ID">Update Info</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@currPatient.ID">Appointmants</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="ProcedureTypes" asp-action="Index">Our Treatments</a></li>
             }
         </ul>
         <form class="form-inline pull-xs-right">

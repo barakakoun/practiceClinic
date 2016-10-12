@@ -8,9 +8,10 @@ using WebApplication3.Models;
 namespace WebApplication3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161012000804_Initial45")]
+    partial class Initial45
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -164,6 +165,18 @@ namespace WebApplication3.Migrations
                     b.HasKey("ID");
                 });
 
+            modelBuilder.Entity("WebApplication3.Models.Drug", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("ID");
+                });
+
             modelBuilder.Entity("WebApplication3.Models.Fan", b =>
                 {
                     b.Property<int>("ID")
@@ -191,17 +204,7 @@ namespace WebApplication3.Migrations
 
                     b.Property<string>("Name");
 
-                    b.HasKey("ID");
-                });
-
-            modelBuilder.Entity("WebApplication3.Models.Medicine_Patient", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("MedicineID");
-
-                    b.Property<int>("PatientID");
+                    b.Property<int?>("PatientID");
 
                     b.HasKey("ID");
                 });
@@ -213,25 +216,17 @@ namespace WebApplication3.Migrations
 
                     b.Property<DateTime>("Birthday");
 
-                    b.Property<string>("Email")
-                        .IsRequired();
+                    b.Property<string>("Email");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired();
+                    b.Property<string>("FirstName");
 
-                    b.Property<string>("Identifier")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 9);
-
-                    b.Property<string>("LastName")
-                        .IsRequired();
+                    b.Property<string>("LastName");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 100);
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasAnnotation("MaxLength", 10);
 
                     b.HasKey("ID");
@@ -334,12 +329,8 @@ namespace WebApplication3.Migrations
                         .HasForeignKey("PostID");
                 });
 
-            modelBuilder.Entity("WebApplication3.Models.Medicine_Patient", b =>
+            modelBuilder.Entity("WebApplication3.Models.Medicine", b =>
                 {
-                    b.HasOne("WebApplication3.Models.Medicine")
-                        .WithMany()
-                        .HasForeignKey("MedicineID");
-
                     b.HasOne("WebApplication3.Models.Patient")
                         .WithMany()
                         .HasForeignKey("PatientID");
