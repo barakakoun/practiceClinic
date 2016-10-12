@@ -45,15 +45,7 @@ namespace WebApplication3.Controllers
             List<int> mpNew = patient.MedicineAllergies.Select(d => d.MedicineID).ToList();
 
             ViewBag.Meds = _context.Medicines.Include(d => d.PatientAllergic).Where(m => mpNew.Contains(m.ID)).ToList();
-
-            //var medList = mpNew.Select()
-            //foreach (Medicine_Patient curr in patient.MedicineAllergies)
-            //{
-            //    lstNew.Add(_context.Medicines.Include(d => d.PatientAllergic))
-            //}
-
-            //List<Medicine> lstNew = _context.Medicines.Include(d => d.PatientAllergic).joi
-
+            
             if (patient == null)
             {
                 return HttpNotFound();
@@ -62,55 +54,17 @@ namespace WebApplication3.Controllers
             return View(patient);
         }
 
-        // GET: Patients/ByID/5
-        //public List<Patient> ByID(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return null;
-        //    }
-
-
-        //    //List<Medicine> med = _context.Medicines.Where(t => arrayOfValues.Contains(t.ID)).ToList();
-        //    //Patient patient = _context.Patients.Include(d => d.PatientDrugs).Include(d => d.Prucedures).Single(m => m.ID == id);
-        //    List<Patient> patient = _context.Patients.Include(d => d.MedicineAllergies).Include(d => d.Prucedures).Where(m => m.ID == id).ToList();
-            
-        //    return patient;
-        //}
-
         // GET: Patients/Create
         public IActionResult Create()
         {
-            //ViewBag.ProcedureTypeID = new SelectList(_context.ProcedureTypes, "ID", "Name", ProcedureTypeID);
-            //var list = _context.Drugs.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
-            //ViewBag.Roles = list;
-
-            //var categories = _context.Drugs.Select(c => new {
-            //    CategoryID = c.ID,
-            //    CategoryName = c.Name
-            //}).ToList();
-            //ViewBag.Categories = new MultiSelectList(categories, "CategoryID", "CategoryName");
-
             var allergies = _context.Medicines.Select(c => new {
                 ID = c.ID,
                 Name = c.Name
             }).ToList();
 
             ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name");
-
-            //Patient tryhi = new Patient();
-
-            //List<spGetTagsOfDocument_Result> tags = db.spGetTagsOfDocument(documentId).ToList();
-
-            //foreach (spGetTagsOfDocument_Result tag in tags)
-            //{
-            //    model.selectedTags.Add(tag.TagName);
-            //}
-
-
-
+            
             return View(new Patient());
-            //return View();
         }
 
         // POST: Patients/Create
@@ -184,32 +138,6 @@ namespace WebApplication3.Controllers
         // GET: Patients/Edit/5
         public IActionResult Edit(int? id)
         {
-            //if (id == null)
-            //{
-            //    return HttpNotFound();
-            //}
-
-            //var PatientsViewModel = new PatientsViewModel
-            //{
-            //    Patient = _context.Patients.Include(i => i.DrugAllergies).First(i => i.ID == id),
-            //    //Patient = _context.Patients.Include(i => i.PatientDrugs).First(i => i.ID == id),
-            //};
-
-            //if (PatientsViewModel.Patient == null)
-            //    return HttpNotFound();
-
-            //var allDrugAllergiesList = _context.Drugs.ToList();
-            //PatientsViewModel.AllDrugAllergies = allDrugAllergiesList.Select(o => new SelectListItem
-            //{
-            //    Text = o.Name,
-            //    Value = o.ID.ToString()
-            //});
-
-            ////ViewBag.EmployerID =
-            ////        new SelectList(db.Employers, "Id", "FullName", jobpostViewModel.JobPost.EmployerID);
-
-            //return View(PatientsViewModel);
-
             if (id == null)
             {
                 return HttpNotFound();
@@ -230,9 +158,6 @@ namespace WebApplication3.Controllers
 
             ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name", selected);
 
-            //string[] mpNew = patient.MedicineAllergies.Select(d => d.MedicineID.ToString()).ToArray<string>();
-            //ViewBag.CurrAllergies = patient.MedicineAllergies.Select(d => d.MedicineID.ToString()).ToArray<string>();
-            //allergies.Where(c => (patient.MedicineAllergies.Select(d => d.MedicineID)).Contains(c.ID))
             return View(patient);
         }
 
@@ -254,6 +179,13 @@ namespace WebApplication3.Controllers
         [ActionName("Delete")]
         public IActionResult Delete(int? id)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            if ((pLogged == null) ||
+                (pLogged.ID != 1))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (id == null)
             {
                 return HttpNotFound();

@@ -9,6 +9,10 @@ namespace WebApplication3.Controllers
         {
             return View();
         }
+        public IActionResult PermissionError()
+        {
+            return View();
+        }
 
         public IActionResult About()
         {

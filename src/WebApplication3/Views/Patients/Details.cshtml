@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");
 }
 
 <h2>Details</h2>
@@ -65,15 +66,10 @@
             </ul>
         </dd>
     </dl>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Options
-        </button>
-        <div class="dropdown-menu" role="group">
-            <a asp-action="Details" asp-route-id="@Model.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
-            <button type="button" class="btn btn-outline-info btn-sm dropdown-item btnChosen" id="btnEdit">Edit</button>
-            <button type="button" class="btn btn-outline-warning btn-sm dropdown-item btnChosen" id="btnProcedure">Prodcedure</button>
-        </div>
+    <div class="btn-group" role="group" aria-label="...">
+        <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-default">Edit</a>
+        <a asp-action="Index" class="btn btn-default">Back to List</a>
+        <a asp-controller="Procedures" asp-action="Create" asp-route-PatientID="@Model.ID" class="btn btn-default" id="btnEdit">Schedual New Prodcedure</a>
     </div>
 </div>
 

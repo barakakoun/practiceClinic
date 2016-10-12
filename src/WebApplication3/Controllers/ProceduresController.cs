@@ -46,6 +46,13 @@ namespace WebApplication3.Controllers
         // GET: Procedures/Create
         public IActionResult Create(int? PatientID, int? ProcedureTypeID)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            if ((pLogged == null) ||
+                (pLogged.ID != 1))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (PatientID != null)
             {
                 ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName", PatientID);
@@ -84,6 +91,13 @@ namespace WebApplication3.Controllers
         // GET: Procedures/Edit/5
         public IActionResult Edit(int? id)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            if ((pLogged == null) ||
+                (pLogged.ID != 1))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (id == null)
             {
                 return HttpNotFound();
@@ -115,6 +129,13 @@ namespace WebApplication3.Controllers
         [ActionName("Delete")]
         public IActionResult Delete(int? id)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            if ((pLogged == null) ||
+                (pLogged.ID != 1))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (id == null)
             {
                 return HttpNotFound();
