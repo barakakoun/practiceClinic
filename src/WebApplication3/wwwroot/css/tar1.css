@@ -16,6 +16,15 @@ Idan Doron 206021800
     padding-right: 4px;
 }
 
+#mainAbout {
+        direction: rtl;
+    font-family: sans-serif;
+}
+#mainVideo {
+    margin: 0 auto; 
+    width:500px;
+}
+
 .tdGroupByChosen {
     font-weight: bolder;
     color: red;

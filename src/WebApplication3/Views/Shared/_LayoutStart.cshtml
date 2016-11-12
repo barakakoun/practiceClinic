@@ -13,6 +13,7 @@
     @*<script src="~/lib/jquery/dist/jquery.min.js" crossorigin="anonymous"></script>*@
     @*<script src="~/lib/bootstrap/dist/js/tether.min.js" crossorigin="anonymous"></script>*@
     @*<script src="~/lib/bootstrap/dist/js/bootstrap.js" crossorigin="anonymous"></script>*@
+    
 
     <title>@ViewData["Title"] - Private Practice - Dentist</title>
 
@@ -50,9 +51,9 @@
                 @Html.Partial("_LoginPartial")
         </form>
     </nav>
-        <section id="intro">
+        <section>
             <header>
-                <h2>Do you have questions for me?</h2>
+                <canvas id="w3rCanvas" width="1500" height="500"></canvas>
             </header>
         </section>
         <div id="content">
@@ -60,11 +61,12 @@
                 @RenderBody()
             </div>
         </div>
+    <br />
         <footer class="bg-primary">
             <!-- Footer -->
             <div id="allRights">© כל הזכויות שמורות לניב גבאי וברק קקון</div>
         </footer>
-
+        
         <environment names="Development">
             <script src="~/lib/bootstrap/dist/js/tether.min.js"></script>
             <script src="~/lib/jquery/dist/jquery-2.1.1.min.js"></script>
@@ -77,6 +79,16 @@
             <script src="~/lib/bootstrap/dist/js/bootstrap-datetimepicker.js"></script>
             <script src="~/lib/alertify/js/alertify.js"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
+            <script type="text/javascript">
+                var canvas = document.getElementById('w3rCanvas');
+                var context = canvas.getContext('2d');
+                var imgObj = new Image();
+
+                imgObj.onload = function () {
+                    context.drawImage(imgObj, 250, 78);
+                };
+                imgObj.src = "/images/PrivatePracticeLogo.png";
+            </script>
         </environment>
         <environment names="Staging,Production">
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
@@ -88,6 +100,16 @@
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
             <script src="~/js/site.min.js" asp-append-version="true"></script>
+            <script type="text/javascript">
+                var canvas = document.getElementById('w3rCanvas');
+                var context = canvas.getContext('2d');
+                var imgObj = new Image();
+
+                imgObj.onload = function () {
+                    context.drawImage(imgObj, 150, 78);
+                };
+                imgObj.src = '//www.w3resource.com/images/logo.png';
+            </script>
         </environment>
 
         @RenderSection("scripts", required: false)

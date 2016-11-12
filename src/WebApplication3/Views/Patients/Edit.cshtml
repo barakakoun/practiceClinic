@@ -1,16 +1,14 @@
 @model WebApplication3.Models.Patient
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Patient";
 }
 
-<h2>Edit</h2>
+<h2>@ViewData["Title"]</h2>
 
 
 <form asp-action="Edit" class="well form-horizontal">
     <fieldset>
-        <legend>Create New Patient</legend>
-        <hr />
         <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Identifier" class="col-md-4 control-label"></label>
@@ -96,16 +94,13 @@
 
         <div class="form-group">
             <label class="col-md-4 control-label"></label>
-            <div class="col-md-4">
+            <div class="btn-group" role="group" aria-label="...">
+                <a asp-action="Index" class="btn btn-default">Back to List</a>
                 <button type="submit" class="btn btn-warning" id="subFinal">Save <span class="glyphicon glyphicon-send"></span></button>
             </div>
         </div>
     </fieldset>
 </form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,15 +1,13 @@
 @model WebApplication3.Models.Patient
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Patient";
 }
 
-<h2>Delete</h2>
+<h2>@ViewData["Title"]</h2>
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Patient</h4>
-    <hr />
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Birthday)

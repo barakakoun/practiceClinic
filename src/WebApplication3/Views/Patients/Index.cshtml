@@ -1,16 +1,16 @@
 @model IEnumerable<WebApplication3.Models.Patient>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Patients List";
     var isFirst = true;
 }
 
-<h2>Index</h2>
-
+<h2>@ViewData["Title"]</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-default">Create New</a>
 </p>
+
 <form id="__AjaxAntiForgeryForm" action="#" method="post"> @Html.AntiForgeryToken()</form>
 
 <div class="btn-group" data-toggle="buttons" id="groupByForm">
@@ -25,7 +25,7 @@
     </label>
 </div>
 
-
+<input id="searchInput" value="Type To Filter">
 <table class="table PatientGroupBy" id="regularPatientView">
     <tr>
         <th>
@@ -48,79 +48,54 @@
         </th>
         <th></th>
     </tr>
+    <tbody id="fbody">
+        @foreach (var item in Model)
+        {
+            <tr id="@item.ID">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identifier)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Birthday)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options
+                        </button>
+                        <div class="dropdown-menu" role="group">
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</a>
+                            @if (item.ID != 1)
+                            {
+                                <button type="button" class="btn btn-outline-danger btn-sm btnChosen dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
+                            }
+                            <a asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item">Prodcedure</a>
 
-    @foreach (var item in Model)
-    {
-        <tr id="@item.ID">
-            <td>
-                @Html.DisplayFor(modelItem => item.Identifier)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Birthday)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-
-                @*לנסות את זה!!!*@
-                <div class="btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Options
-                    </button>
-                    <div class="dropdown-menu" role="group">
-                        <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</a>
-                        <button type="button" class="btn btn-outline-danger btn-sm btnChosen dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
-                        <a asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item">Prodcedure</a>
-
+                        </div>
                     </div>
-                </div>
-            </td>
-        </tr>
-    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
-
-@*<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">Patient Details</h4>
-            </div>
-            <div class="modal-body">
-                <dl class="dl-horizontal">
-                <dt>
-                    @Html.DisplayNameFor(model => model.Identifier)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Identifier)
-                </dd>
-                </dl>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="DeletionConfirmed" data-dismiss="modal">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>*@
 
 <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #0275d8;color: white;">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -456,6 +431,39 @@
         //    });
         //});
 
+        $("#searchInput").keyup(function () {
+            //split the current value of searchInput
+            var data = this.value.split(" ");
+            //create a jquery object of the rows
+            var jo = $("#fbody").find("tr");
+            if (this.value == "") {
+                jo.show();
+                return;
+            }
+            //hide all the rows
+            jo.hide();
+
+            //Recusively filter the jquery object to get results.
+            jo.filter(function (i, v) {
+                var $t = $(this);
+                for (var d = 0; d < data.length; ++d) {
+                    if ($t.is(":contains('" + data[d] + "')")) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+            //show the rows that match.
+            .show();
+        }).focus(function () {
+            this.value = "";
+            $(this).css({
+                "color": "black"
+            });
+            $(this).unbind('focus');
+        }).css({
+            "color": "#C0C0C0"
+        });
     </script>
 }
 

@@ -18,7 +18,6 @@ namespace WebApplication3.Controllers
         // GET: Procedures
         public IActionResult Index(int? nPatient)
         {
-            //var query = _context.Procedures.GroupBy(p => p.PatientID);
             if (nPatient == null)
             {
                 var allPatients = _context.Patients.ToList();

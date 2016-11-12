@@ -1,14 +1,13 @@
 @model WebApplication3.Models.ProcedureType
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Procedure Type Details";
     Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");
 }
 
-<h2>Details</h2>
+<h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>ProcedureType</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -46,11 +45,12 @@
         </dd>
     </dl>
 </div>
-<p>
+<div class="btn-group" role="group" aria-label="...">
+    <a asp-action="Index" class="btn btn-default">Back to List</a>
     @if (currPatient.ID == 1)
     {
-        <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a>
+        <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-primary">Edit</a>
     }
-    <a asp-action="Index">Back to List</a>
-</p>
+</div>
 
+<br />

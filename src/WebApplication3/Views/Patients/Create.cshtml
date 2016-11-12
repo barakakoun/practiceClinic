@@ -1,15 +1,13 @@
 @model WebApplication3.Models.Patient
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create New Patient";
 }
 
-<h2>Create</h2>
+<h2>@ViewData["Title"]</h2>
 
 <form asp-action="Create" class="well form-horizontal">
     <fieldset>
-        <legend>Create New Patient</legend>
-            <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Identifier" class="col-md-4 control-label"></label>
@@ -95,16 +93,13 @@
 
         <div class="form-group">
             <label class="col-md-4 control-label"></label>
-            <div class="col-md-4">
+            <div class="btn-group" role="group" aria-label="...">
+                <a asp-action="Index" class="btn btn-default">Back to List</a>
                 <button type="submit" class="btn btn-warning" id="subFinal">Create <span class="glyphicon glyphicon-send"></span></button>
             </div>
         </div>
     </fieldset>
 </form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -112,6 +107,8 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
     <script type="text/javascript" language="javascript">
+        // Regular expressions for validation
+
         $("#regEmail").on('keyup', function (e) {
             var val = $(this).val();
             if (val.match(/[\u0591-\u05F4]/)) {
@@ -131,11 +128,5 @@
                 $(this).val(val.replace(/[^A-Za-z\u0591-\u05F4"-']/, ''));
             }
         });
-
-        //$("#arrAllergies").on('click', function (e) {
-        //    var val = $(this).val();
-        //});
-        
-        
     </script>
 }

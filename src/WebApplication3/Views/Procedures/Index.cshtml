@@ -1,7 +1,7 @@
 @model IEnumerable<WebApplication3.Models.Procedure>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Procedures List";
     Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");
 }
 
@@ -9,7 +9,7 @@
 @if (currPatient.ID == 1)
 {
     <p>
-        <a asp-action="Create" asp-route-PatientID="@ViewData["nCurrPatient"]">Create New</a>
+        <a asp-action="Create" asp-route-PatientID="@ViewData["nCurrPatient"]" class="btn btn-default">Create New</a>
     </p>
 }
 
@@ -43,7 +43,8 @@
             @Html.DisplayFor(modelItem => currProc.Time)
         </td>
         <td>
-            <a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID">@currProc.Patient.FirstName @currProc.Patient.LastName</a>
+            @*<a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID">@currProc.Patient.FirstName @currProc.Patient.LastName</a>*@
+            <a class="btn btn-sm btnChosenPatient" id="btnPatient" data-toggle="modal" data-target="#patientDetails" style="color: blue;font-weight: bold;">@currProc.Patient.FirstName @currProc.Patient.LastName</a>
         </td>
         <td>
             <div class="btn-group" role="group">
@@ -60,20 +61,76 @@
                 </div>
             </div>
         </td>
+        <div class="modal fade" id="patientDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #0275d8;color: white;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Patient Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Identifier
+                            </dt>
+                            <dd>
+                                @currProc.Patient.Identifier
+                            </dd>
+                            <dt>
+                                First Name
+                            </dt>
+                            <dd>
+                                @currProc.Patient.FirstName
+                            </dd>
+                            <dt>
+                                Last Name
+                            </dt>
+                            <dd>
+                                @currProc.Patient.LastName
+                            </dd>
+                            <dt>
+                                Birthday
+                            </dt>
+                            <dd>
+                                @currProc.Patient.Birthday
+                            </dd>
+                            <dt>
+                                Email
+                            </dt>
+                            <dd>
+                                @currProc.Patient.Email
+                            </dd>
+                            <dt>
+                                Phone
+                            </dt>
+                            <dd>
+                                @currProc.Patient.Phone
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID" type="button" class="btn btn-primary">Patient Page</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </tr>
 }
 </table>
 <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #0275d8;color: white;">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">Procedure Type Delete</h4>
+                <h4 class="modal-title" id="myModalLabel">Procedure Delete</h4>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this types?
+                Are you sure you want to delete this procedure?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -84,6 +141,7 @@
 </div>
 
 
+
 @section scripts {
     <script type="text/javascript">
         AddAntiForgeryToken = function (data) {
@@ -92,9 +150,10 @@
         };
 
         var nIdChosen;
+
+
         $(".btnChosen").click(function () {
             nIdChosen = $(this).parent().parent().parent().parent().attr("id");
-
         });
 
 
