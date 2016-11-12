@@ -12,15 +12,24 @@
             });
         });
 
+        // When choosing procedure type, change the price to the type default price
         $('select#ProcedureTypeID').change(function () {
                 var selectedProTypeID = $(this).val();
 
+            // If no type was selected
+
+                // Get the default price of the selected type
                 $.get("/ProcedureTypes/PriceByID", { nTypeID: selectedProTypeID }, function (data, status) {
                     $("#initialPrice").val(data);
                 });
         });
 
     </script>
+
+
+@*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 <h2>Create</h2>
 
@@ -58,13 +67,6 @@
                 <span asp-validation-for="Price" class="text-danger" />
             </div>
         </div>
-        @*<div class="form-group">
-            <label asp-for="Time" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Time" class="form-control" type="datetime"/>
-                <span asp-validation-for="Time" class="text-danger" />
-            </div>
-        </div>*@
             <div class="form-group">
                 <label asp-for="Time" class="col-md-2 control-label"></label>
                 <div class='input-group date col-md-10' id='datetimepicker11' style="width: 348px;padding: 0px 15px 0px 15px;">

@@ -7,7 +7,7 @@
 <h2>Edit</h2>
 
 
-<form asp-action="Create" class="well form-horizontal">
+<form asp-action="Edit" class="well form-horizontal">
     <fieldset>
         <legend>Create New Patient</legend>
         <hr />
@@ -114,11 +114,10 @@
 
     <script type="text/javascript" language="javascript">
 
-        $("#subFinal").on("click", function (e) {
-            e.preventDefault();
+        $("#subFinal").on("onmousedown", function (e) {
+            //e.preventDefault();
             //var val2 = @Model.MedicineAllergies;
             var val = $("#arrAllergies").val(["3", "4"]);
-
         });
 
     </script>

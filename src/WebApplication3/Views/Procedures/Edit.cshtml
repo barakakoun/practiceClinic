@@ -34,6 +34,20 @@
                 <span asp-validation-for="Time" class="text-danger" />
             </div>
         </div>
+        <div class="form-group" style="display:none">
+            <label asp-for="ProcedureTypeID" class="col-md-2 control-label"></label>
+            <div class="col-md-10" id="ProType">
+                <input asp-for="ProcedureTypeID" class="form-control" />
+                <span asp-validation-for="ProcedureTypeID" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group" style="display:none">
+            <label asp-for="PatientID" class="col-md-2 control-label"></label>
+            <div class="col-md-10" id="ProType">
+                <input asp-for="PatientID" class="form-control" />
+                <span asp-validation-for="PatientID" class="text-danger" />
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

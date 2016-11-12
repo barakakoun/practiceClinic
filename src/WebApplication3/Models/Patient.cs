@@ -25,7 +25,7 @@ namespace WebApplication3.Models
 
         [Required]
         [Display(Name = "ID")]
-        [StringLength(9, ErrorMessage = "ID is a 9 digits number", MinimumLength = 1)]
+        [StringLength(9, ErrorMessage = "ID is a 9 digits number", MinimumLength = 9)]
         public String Identifier { get; set; }
 
         [Required]

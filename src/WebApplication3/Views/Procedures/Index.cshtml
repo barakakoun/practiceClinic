@@ -5,11 +5,11 @@
     Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
 @if (currPatient.ID == 1)
 {
     <p>
-        <a asp-action="Create">Create New</a>
+        <a asp-action="Create" asp-route-PatientID="@ViewData["nCurrPatient"]">Create New</a>
     </p>
 }
 <table class="table">
@@ -22,6 +22,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PatientID)
         </th>
         <th></th>
     </tr>
@@ -36,6 +39,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => currProc.Time)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => currProc.PatientID)
         </td>
         <td>
             <a asp-action="Details" asp-route-id="@currProc.ID">Details</a>

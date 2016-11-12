@@ -23,6 +23,8 @@ namespace WebApplication3.Controllers
             {
                 return View(_context.Procedures.ToList());
             }
+            ViewData["nCurrPatient"] = nPatient;
+            ViewBag.nCurrPatient = nPatient;
             return View(_context.Procedures.Where(p => p.PatientID == nPatient).ToList());
         }
 
@@ -85,6 +87,27 @@ namespace WebApplication3.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            int PatientID = procedure.PatientID, ProcedureTypeID = procedure.ProcedureTypeID;
+            if (PatientID != 0)
+            {
+                ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName", PatientID);
+            }
+            else
+            {
+                ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName");
+            }
+
+            if (ProcedureTypeID != 0)
+            {
+                ViewBag.ProcedureTypeID = new SelectList(_context.ProcedureTypes, "ID", "Name", ProcedureTypeID);
+            }
+            else
+            {
+                ViewBag.ProcedureTypeID = new SelectList(_context.ProcedureTypes, "ID", "Name");
+            }
+
+
             return View(procedure);
         }
 
@@ -103,6 +126,10 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
+            var proceduretry =
+                from it in _context.Procedures
+                where it.ID.Equals(id)
+                select it;
             Procedure procedure = _context.Procedures.Single(m => m.ID == id);
             if (procedure == null)
             {

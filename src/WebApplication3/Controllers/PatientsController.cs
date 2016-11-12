@@ -143,6 +143,7 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
+            // Get the patient
             Patient patient = _context.Patients.Include(p => p.MedicineAllergies).Include(p => p.Prucedures).Single(m => m.ID == id);
             if (patient == null)
             {
@@ -156,7 +157,8 @@ namespace WebApplication3.Controllers
 
             var selected = allergies.Where(c => (patient.MedicineAllergies.Select(d => d.MedicineID)).Contains(c.ID)).ToList();
 
-            ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name", selected);
+            // selected in the end
+            ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name", selected.Select(t => t.ID).ToArray());
 
             return View(patient);
         }
@@ -168,6 +170,29 @@ namespace WebApplication3.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Find all the medicine that were unchosen and remove them
+                _context.Medicine_Patients.Where(curr => curr.PatientID == patient.ID).
+                    Where(curr => !Allergies.Contains(curr.MedicineID.ToString())).ToList().
+                    ForEach(curr=> _context.Medicine_Patients.Remove(curr));
+
+                _context.SaveChanges();
+
+                // Add new allergies
+                // Run over the user choose
+                foreach (string currChose in Allergies)
+                {
+                    // If the current choose isnt exist yet
+                    // then add it!
+                    if (!_context.Medicine_Patients.Any(curr=>curr.MedicineID.ToString().Equals(currChose)&&(curr.PatientID == patient.ID)))
+                    {
+                        Medicine_Patient mpNew = new Medicine_Patient();
+                        mpNew.MedicineID = Int32.Parse(currChose);
+                        mpNew.PatientID = patient.ID;
+
+                        _context.Medicine_Patients.Add(mpNew);
+                    }
+                }
+
                 _context.Update(patient);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
