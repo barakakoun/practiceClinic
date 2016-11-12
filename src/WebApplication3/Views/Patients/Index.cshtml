@@ -81,7 +81,7 @@
                         <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
                         <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</a>
                         <button type="button" class="btn btn-outline-danger btn-sm btnChosen dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
-                        <a asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item" id="btnEdit">Prodcedure</a>
+                        <a asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item">Prodcedure</a>
 
                     </div>
                 </div>
@@ -199,8 +199,8 @@
                         </button>
                         <div class="dropdown-menu" role="group">
                             <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
-                            <button type="button" class="btn btn-outline-info btn-sm dropdown-item btnChosen" id="btnEdit">Edit</button>
-                            <button type="button" class="btn btn-outline-warning btn-sm dropdown-item btnChosen" id="btnProcedure">Prodcedure</button>
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</a>
+                            <a asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item">Prodcedure</a>
                         </div>
                     </div>
                 </td>
@@ -264,7 +264,7 @@
                         <div class="dropdown-menu" role="group">
                             <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
                             <button type="button" class="btn btn-outline-info btn-sm dropdown-item btnChosen" id="btnEdit">Edit</button>
-                            <button type="button" class="btn btn-outline-warning btn-sm dropdown-item btnChosen" id="btnProcedure">Prodcedure</button>
+                            <a asp-controller="Procedures" asp-action="Index" asp-route-nPatient="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item">Prodcedure</a>
                         </div>
                     </div>
                 </td>

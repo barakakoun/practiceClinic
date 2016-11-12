@@ -21,10 +21,21 @@ namespace WebApplication3.Controllers
             //var query = _context.Procedures.GroupBy(p => p.PatientID);
             if (nPatient == null)
             {
-                return View(_context.Procedures.ToList());
+                var allPatients = _context.Patients.ToList();
+                var allProcedures = _context.Procedures.ToList();
+
+                foreach (Procedure curr in _context.Procedures.ToList())
+                {
+                    allProcedures.Single(curr3=>curr3.ID==curr.ID).Patient = allPatients.Single(curr2 => curr2.ID == curr.PatientID);
+                }
+                return View(allProcedures);
             }
             ViewData["nCurrPatient"] = nPatient;
             ViewBag.nCurrPatient = nPatient;
+
+            // Add the object of the client so we can read it's name
+            Patient chosenPatient = _context.Patients.Single(curr => curr.ID == nPatient);
+            _context.Procedures.Where(p => p.PatientID == nPatient).ToList().ForEach(curr=>curr.Patient=chosenPatient);
             return View(_context.Procedures.Where(p => p.PatientID == nPatient).ToList());
         }
 
