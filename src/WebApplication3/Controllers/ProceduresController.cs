@@ -3,6 +3,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using WebApplication3.Models;
+using System.Collections.Generic;
 
 namespace WebApplication3.Controllers
 {
@@ -18,24 +19,17 @@ namespace WebApplication3.Controllers
         // GET: Procedures
         public IActionResult Index(int? nPatient)
         {
+            var allProcedures = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).ToList();
+
             if (nPatient == null)
             {
-                var allPatients = _context.Patients.ToList();
-                var allProcedures = _context.Procedures.ToList();
-
-                foreach (Procedure curr in _context.Procedures.ToList())
-                {
-                    allProcedures.Single(curr3=>curr3.ID==curr.ID).Patient = allPatients.Single(curr2 => curr2.ID == curr.PatientID);
-                }
                 return View(allProcedures);
             }
             ViewData["nCurrPatient"] = nPatient;
             ViewBag.nCurrPatient = nPatient;
 
             // Add the object of the client so we can read it's name
-            Patient chosenPatient = _context.Patients.Single(curr => curr.ID == nPatient);
-            _context.Procedures.Where(p => p.PatientID == nPatient).ToList().ForEach(curr=>curr.Patient=chosenPatient);
-            return View(_context.Procedures.Where(p => p.PatientID == nPatient).ToList());
+            return View(allProcedures.Where(p => p.PatientID == nPatient));
         }
 
         // GET: Procedures/Details/5
@@ -65,13 +59,21 @@ namespace WebApplication3.Controllers
                 return RedirectToAction("PermissionError", "Home");
             }
 
+            List<object> newPatList = new List<object>();
+            foreach (var ptCurr in _context.Patients)
+                newPatList.Add(new
+                {
+                    ID = ptCurr.ID,
+                    Name = ptCurr.FirstName + " " + ptCurr.LastName + " (" + ptCurr.Identifier + ")"
+                });
+
             if (PatientID != null)
             {
-                ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName", PatientID);
+                ViewBag.PatientID = new SelectList(newPatList, "ID", "Name", PatientID);
             }
             else
             {
-                ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName");
+                ViewBag.PatientID = new SelectList(newPatList, "ID", "Name");
             }
 
             if (ProcedureTypeID != null)
@@ -99,13 +101,21 @@ namespace WebApplication3.Controllers
             }
 
             int PatientID = procedure.PatientID, ProcedureTypeID = procedure.ProcedureTypeID;
+            List<object> newPatList = new List<object>();
+            foreach (var ptCurr in _context.Patients)
+                newPatList.Add(new
+                {
+                    ID = ptCurr.ID,
+                    Name = ptCurr.FirstName + " " + ptCurr.LastName + " (" + ptCurr.Identifier + ")"
+                });
+
             if (PatientID != 0)
             {
-                ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName", PatientID);
+                ViewBag.PatientID = new SelectList(newPatList, "ID", "Name", PatientID);
             }
             else
             {
-                ViewBag.PatientID = new SelectList(_context.Patients, "ID", "FirstName");
+                ViewBag.PatientID = new SelectList(newPatList, "ID", "Name");
             }
 
             if (ProcedureTypeID != 0)

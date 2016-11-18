@@ -28,6 +28,9 @@
         <th>
             @Html.DisplayNameFor(model => model.PatientID)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProcedureTypeID)
+        </th>
         <th></th>
     </tr>
     
@@ -44,7 +47,10 @@
         </td>
         <td>
             @*<a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID">@currProc.Patient.FirstName @currProc.Patient.LastName</a>*@
-            <a class="btn btn-sm btnChosenPatient" id="btnPatient" data-toggle="modal" data-target="#patientDetails" style="color: blue;font-weight: bold;">@currProc.Patient.FirstName @currProc.Patient.LastName</a>
+            <a class="btn btn-sm btnChosenPatient" id="btnPatient" data-toggle="modal" data-target="#patient-@currProc.PatientID" style="color: blue;font-weight: bold;">@currProc.Patient.FirstName @currProc.Patient.LastName</a>
+        </td>
+        <td>
+            <a class="btn btn-sm btnChosenType" id="btnType" data-toggle="modal" data-target="#type-@currProc.ProcedureTypeID" style="color: blue;font-weight: bold;">@currProc.ProcedureType.Name</a>
         </td>
         <td>
             <div class="btn-group" role="group">
@@ -61,7 +67,7 @@
                 </div>
             </div>
         </td>
-        <div class="modal fade" id="patientDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" name="hey-@currProc.PatientID" id="patient-@currProc.PatientID" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #0275d8;color: white;">
@@ -91,10 +97,10 @@
                                 @currProc.Patient.LastName
                             </dd>
                             <dt>
-                                Birthday
+                                @Html.DisplayNameFor(curr => curr.Patient.Birthday)
                             </dt>
                             <dd>
-                                @currProc.Patient.Birthday
+                                @currProc.Patient.Birthday.ToString(@"dd\/MM\/yyyy")
                             </dd>
                             <dt>
                                 Email
@@ -113,6 +119,50 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID" type="button" class="btn btn-primary">Patient Page</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="type-@currProc.ProcedureTypeID" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #0275d8;color: white;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Procedure Type Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Name
+                            </dt>
+                            <dd>
+                                @currProc.ProcedureType.Name
+                            </dd>
+                            <dt>
+                                Duration
+                            </dt>
+                            <dd>
+                                @currProc.ProcedureType.Duration
+                            </dd>
+                            <dt>
+                                Type
+                            </dt>
+                            <dd>
+                                @currProc.ProcedureType.Type.ToString()
+                            </dd>
+                            <dt>
+                                Recommanded Price
+                            </dt>
+                            <dd>
+                                @currProc.ProcedureType.Price
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a asp-controller="ProcedureTypes" asp-action="Details" asp-route-id="@currProc.ProcedureTypeID" type="button" class="btn btn-primary">Procedure Type Page</a>
                     </div>
                 </div>
             </div>

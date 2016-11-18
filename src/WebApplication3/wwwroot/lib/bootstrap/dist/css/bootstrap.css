@@ -3629,8 +3629,7 @@ input[type="button"].btn-block {
 .nav-tabs .nav-item.open .nav-link,
 .nav-tabs .nav-item.open .nav-link:focus,
 .nav-tabs .nav-item.open .nav-link:hover {
-  color: #55595c;
-  background-color: #fff;
+  color: rgba(255,255,255,.75);
   border-color: #ddd #ddd transparent;
 }
 

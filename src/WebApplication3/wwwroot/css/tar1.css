@@ -1,12 +1,16 @@
 /*
 Barak Kakoun 311503999
-Idan Doron 206021800
 */
 
 /*------------------------------
 =BASIC SETUP
 ------------------------------*/
 
+#newCanvas {
+    width: 100%;
+    margin-top: 46px;
+    border-radius: 24px;
+}
 
 #arrAllergies {
     max-width: 218px;
@@ -22,7 +26,7 @@ Idan Doron 206021800
 }
 #mainVideo {
     margin: 0 auto; 
-    width:500px;
+    width:100%;
 }
 
 .tdGroupByChosen {
@@ -35,8 +39,23 @@ Idan Doron 206021800
 
 #navbarTitle {
     font-size: 25px;
+    text-shadow: 1px 1px 3px black;
 }
 
+a.nav-link:hover {
+    background-color: transparent !important;
+}
+a.nav-link:focus {
+    background-color: transparent !important;
+    color: rgba(255,255,255,.75);
+}
+a.btn-outline-secondary {
+    transition: 1s;
+}
+.newspaper {
+    column-count: 3;
+    column-gap: 10px;
+}
 
 
 /* Makeshift CSS Reset */
@@ -52,7 +71,7 @@ header, footer, section, aside, nav, article {
 
 @font-face {
     font-family: myFirstFont;
-    src: url(../../images/sansation_light.woff);
+    src: url("sansation_light.woff");
 }
 
 body {
@@ -67,6 +86,7 @@ h1, h2 {
 	font-size: 28px;
 	line-height: 44px;
 	padding: 22px 0;
+    font-family: myFirstFont;
 }
 
 #topTitle {
@@ -176,14 +196,12 @@ p {
 
 #content {
 	display: table;
-        width: 65%;
+        width: 100%;
 }
 
 	#mainContent {
 		display: table-cell;
-		width: 620px;
-		padding-right: 22px;
-        font-family: myFirstFont;
+        font-family: sans-serif !important;
 	}
 	
 	aside {

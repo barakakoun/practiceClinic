@@ -16,12 +16,13 @@
         $('select#ProcedureTypeID').change(function () {
                 var selectedProTypeID = $(this).val();
 
-            // If no type was selected
-
-                // Get the default price of the selected type
-                $.get("/ProcedureTypes/PriceByID", { nTypeID: selectedProTypeID }, function (data, status) {
-                    $("#initialPrice").val(data);
-                });
+                // If no type was selected
+                if (selectedProTypeID != "") {
+                    // Get the default price of the selected type
+                    $.get("/ProcedureTypes/PriceByID", { nTypeID: selectedProTypeID }, function (data, status) {
+                        $("#initialPrice").val(data);
+                    });
+                }
         });
 
     </script>
@@ -37,15 +38,16 @@
         <div class="form-group">
             <label asp-for="PatientID" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @Html.DropDownList("PatientID", String.Empty)
+                @Html.DropDownList("PatientID", null, new { @id = "PatientID" })
                 <span asp-validation-for="PatientID" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
             <label asp-for="ProcedureTypeID" class="col-md-2 control-label"></label>
             <div class="col-md-10" id="ProType">
-                @Html.DropDownList("ProcedureTypeID", String.Empty)
-                <span asp-validation-for="ProcedureTypeID" class="text-danger" />
+                @Html.DropDownList("ProcedureTypeID", "--Select a Procedure Type--")
+                <span asp-validation-for="ProcedureTypeID" class="text-danger" /> <br />
+                @Html.ValidationMessage("ProcedureTypeID")
             </div>
         </div>
         <div class="form-group">

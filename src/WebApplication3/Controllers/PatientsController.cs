@@ -37,19 +37,19 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            //Patient patient = _context.Patients.Include(d => d.PatientDrugs).Include(d => d.Prucedures).Single(m => m.ID == id);
             Patient patient = _context.Patients.Include(d => d.MedicineAllergies).Include(d => d.Prucedures).Single(m => m.ID == id);
 
-            //List<Medicine_Patient> mpNew = _context.Medicine_Patients.Where(d => patient.MedicineAllergies.Contains(d.ID));
-
-            List<int> mpNew = patient.MedicineAllergies.Select(d => d.MedicineID).ToList();
-
-            ViewBag.Meds = _context.Medicines.Include(d => d.PatientAllergic).Where(m => mpNew.Contains(m.ID)).ToList();
-            
             if (patient == null)
             {
                 return HttpNotFound();
             }
+
+            var allergies =
+                from MP in patient.MedicineAllergies
+                where MP.PatientID == patient.ID
+                join M in _context.Medicines on MP.MedicineID equals M.ID
+                select M.Name;
+            ViewBag.Meds = allergies.ToList();
 
             return View(patient);
         }
@@ -76,19 +76,6 @@ namespace WebApplication3.Controllers
             {
                 bool isExist;
 
-                //isExist = _context.Patients.Any(m => m.Email == patient.Email);
-                //if (isExist)
-                //{
-                //    ModelState.AddModelError(string.Empty, "User with the same email is already exist");
-                //    return View(patient);
-                //}
-
-                //isExist = _context.Patients.Any(m => m.Phone == patient.Phone);
-                //if (isExist)
-                //{
-                //    ModelState.AddModelError(string.Empty, "User with the same phone is already exist");
-                //    return View(patient);
-                //}
 
                 isExist = _context.Patients.Any(m => m.Identifier.Equals(patient.Identifier));
                 if (isExist)

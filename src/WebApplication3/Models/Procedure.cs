@@ -10,10 +10,12 @@ namespace WebApplication3.Models
     public class Procedure
     {
         public int ID { get; set; }
-        
+
+        [Required]
         [Display(Name = "Procedure Type")]
         public int ProcedureTypeID { get; set; }
-        
+
+        [Required]
         [Display(Name = "Patient")]
         public int PatientID { get; set; }
         

@@ -53,7 +53,7 @@
     </nav>
         <section>
             <header>
-                <canvas id="w3rCanvas" width="1500" height="500"></canvas>
+                <canvas id="newCanvas" width="1903" height="444"></canvas>
             </header>
         </section>
         <div id="content">
@@ -80,14 +80,15 @@
             <script src="~/lib/alertify/js/alertify.js"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
             <script type="text/javascript">
-                var canvas = document.getElementById('w3rCanvas');
+                var canvas = document.getElementById('newCanvas');
                 var context = canvas.getContext('2d');
-                var imgObj = new Image();
+                var imgObj = new Image(1333, 336);
+
+                imgObj.src = "/images/canImg.jpg";
 
                 imgObj.onload = function () {
-                    context.drawImage(imgObj, 250, 78);
+                    context.drawImage(imgObj, 0, 0);
                 };
-                imgObj.src = "/images/PrivatePracticeLogo.png";
             </script>
         </environment>
         <environment names="Staging,Production">
@@ -100,16 +101,6 @@
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
             <script src="~/js/site.min.js" asp-append-version="true"></script>
-            <script type="text/javascript">
-                var canvas = document.getElementById('w3rCanvas');
-                var context = canvas.getContext('2d');
-                var imgObj = new Image();
-
-                imgObj.onload = function () {
-                    context.drawImage(imgObj, 150, 78);
-                };
-                imgObj.src = '//www.w3resource.com/images/logo.png';
-            </script>
         </environment>
 
         @RenderSection("scripts", required: false)
