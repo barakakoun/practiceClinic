@@ -25,9 +25,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Time)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PatientID)
-        </th>
+        @if (currPatient.ID == 1)
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.PatientID)
+            </th>
+        }
         <th>
             @Html.DisplayNameFor(model => model.ProcedureTypeID)
         </th>
@@ -45,10 +48,13 @@
         <td>
             @Html.DisplayFor(modelItem => currProc.Time)
         </td>
-        <td>
-            @*<a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID">@currProc.Patient.FirstName @currProc.Patient.LastName</a>*@
-            <a class="btn btn-sm btnChosenPatient" id="btnPatient" data-toggle="modal" data-target="#patient-@currProc.PatientID" style="color: blue;font-weight: bold;">@currProc.Patient.FirstName @currProc.Patient.LastName</a>
-        </td>
+        @if (currPatient.ID == 1)
+        {
+            <td>
+                @*<a asp-controller="Patients" asp-action="Details" asp-route-id="@currProc.PatientID">@currProc.Patient.FirstName @currProc.Patient.LastName</a>*@
+                <a class="btn btn-sm btnChosenPatient" id="btnPatient" data-toggle="modal" data-target="#patient-@currProc.PatientID" style="color: blue;font-weight: bold;">@currProc.Patient.FirstName @currProc.Patient.LastName</a>
+            </td>
+        }
         <td>
             <a class="btn btn-sm btnChosenType" id="btnType" data-toggle="modal" data-target="#type-@currProc.ProcedureTypeID" style="color: blue;font-weight: bold;">@currProc.ProcedureType.Name</a>
         </td>

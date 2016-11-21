@@ -9,6 +9,7 @@
 
 <p>
     <a asp-action="Create" class="btn btn-default">Create New</a>
+    <a asp-action="Search" class="btn btn-default">Search</a>
 </p>
 
 <form id="__AjaxAntiForgeryForm" action="#" method="post"> @Html.AntiForgeryToken()</form>
@@ -25,7 +26,6 @@
     </label>
 </div>
 
-<input id="searchInput" value="Type To Filter">
 <table class="table PatientGroupBy" id="regularPatientView">
     <tr>
         <th>
@@ -256,23 +256,6 @@
             return data;
         };
 
-        //$('#detailsModal').on('show.bs.modal', function (e) {
-        //    e.preventDefault();
-        //        var url = $(e.relatedTarget).attr('href');
-
-
-        //        $.get(url, function (data, status) {
-        //            $("#confirmDelete").modal();
-        //            //$('<div class="modal hide fade">' + data + '</div>').modal();
-        //        //$("#initialPrice").val(data);
-        //        }).success(function () { $('input:text:visible:first').focus(); });
-
-        //    //var $modal = $(this),
-        //    //    esseyId = e.relatedTarget.id;
-
-        //})
-
-
         $('.PatientGroupBy').not('#' + $('input[name=groupBy]:checked', '#groupByForm').val()).hide();
 
 
@@ -280,34 +263,18 @@
             $('.PatientGroupBy').not('#' + $('input[name=groupBy]:checked', '#groupByForm').val()).hide();
             $('#' + $('input[name=groupBy]:checked', '#groupByForm').val()).show();
         });
-        //$("#btnDelete").click(function () {
-        //    $('#confirmDelete')[0].showModal();
-        //    transition = window.setTimeout(function () {
-        //        $('#confirmDelete').addClass('dialog-scale');
-        //    }, 0.5);
-        //})
-
-        //$('#cancelDelete').on('click', function () {
-        //    $('#confirmDelete')[0].close();
-        //    $('#confirmDelete').removeClass('dialog-scale');
-        //    clearTimeout(transition);
-        //});
-
 
         var nIdChosen;
+        // This is to save the id of the patient was click
         $(".btnChosen").click(function () {
             nIdChosen = $(this).parent().parent().parent().parent().attr("id");
-
-            //$(".modal-body #bookId").val(myBookId);
-            // As pointed out in comments,
-            // it is superfluous to have to manually call the modal.
-            // $('#addBookDialog').modal('show');
         });
 
         $(document).on('change', 'input:radio[id^="q_op_"]', function (event) {
             alert("click fired");
         });
 
+        // Delete ajax request
         $("#DeletionConfirmed").click(function () {
             if (nIdChosen == null) {
                 alertify.error("Error Occurred");
@@ -320,18 +287,8 @@
                     type: 'Post',
                     data: AddAntiForgeryToken({ id: nIdChosen }),
                     success: (function (result) {
-
+                        // Hide and notify the user
                         $("#" + nIdChosen).hide(500);
-                        //$("#countofproducts").text("(" + result + ")");
-
-                        //if (result == 0) {
-                        //    $("#shoppingbag").css("display", "none");
-                        //    $(".main-content").append($("<div>").text('לא קיימים פריטים בסל הקניות'));
-                        //}
-
-                        //var sum = $("#sum").text();
-                        //$("#sum").text(sum - str[1])
-
                         alertify.success("The patient was deleted");
                     }),
                     error: (function (xhr, status) {
@@ -339,130 +296,6 @@
                     })
                 });
             }
-        });
-
-
-        //$("#DeletionConfirmed").click(function () {
-        //    if (nIdChosen == null) {
-        //        alertify.error("Error Occurred");
-        //    }
-        //    else if (nIdChosen == 1) {
-        //        alertify.error("Admin cannot be deleted!");
-        //    } else {
-        //        $.ajax({
-        //            url: '/Patients/Delete',
-        //            type: 'Post',
-        //            data: AddAntiForgeryToken({ id: nIdChosen }),
-        //            success: (function (result) {
-
-        //                $("#" + nIdChosen).hide(500);
-        //                //$("#countofproducts").text("(" + result + ")");
-
-        //                //if (result == 0) {
-        //                //    $("#shoppingbag").css("display", "none");
-        //                //    $(".main-content").append($("<div>").text('לא קיימים פריטים בסל הקניות'));
-        //                //}
-
-        //                //var sum = $("#sum").text();
-        //                //$("#sum").text(sum - str[1])
-
-        //                alertify.success("The patient was deleted");
-        //            }),
-        //            error: (function (xhr, status) {
-        //                alertify.error("Delete failed");
-        //            })
-        //        });
-        //    }
-        //});
-
-        //$("#buy").click(function () {
-
-        //    $.ajax({
-        //        url: '/ShoppingBag/Buy',
-        //        type: 'Post',
-        //        dataType: 'Json',
-        //        success: (function (result) {
-
-        //            if (result) {
-        //                $("#shoppingBag").css("display", "none");
-        //                $("#message").css("display", " block");
-        //                $("#countOfProducts").text("(0)");
-
-        //            }
-        //            else {
-        //                alert("רק משתמש קיים יכול לבצע הזמנה, אנא התחבר ונסה שנית");
-        //            }
-        //        }),
-        //        error: (function (xhr, status) {
-        //            alert(status);
-        //        })
-        //    });
-        //});
-
-        //$("#currencyNames").change(function () {
-
-        //    var prevCurrency = $("#currency").val();
-        //    var selCurrency = $("#currencyNames").val();
-        //    if (selCurrency.length == 0) {
-        //        selCurrency = "ILS";
-        //    }
-
-        //    $.ajax({
-        //        url: '/WSConverter/CurrencyRate',
-        //        type: 'Post',
-        //        dataType: 'Json',
-        //        data: { fromCurrency: prevCurrency, toCurrency: selCurrency },
-        //        success: (function (result) {
-        //            $("#currency").val(selCurrency);
-
-        //            $(".priceConv").each(function () {
-        //                var x = $(this).text();
-        //                var d = Math.round((x * result) * 100) / 100;
-        //                $(this).text(Math.round(d));
-        //            });
-
-        //            var oldSum = $("#sum").text();
-        //            var s = Math.round((oldSum * result) * 100) / 100;
-        //            $("#sum").text(Math.round(s));
-        //        }),
-        //        error: (function (xhr, status) {
-        //            alert(status);
-        //        })
-        //    });
-        //});
-
-        $("#searchInput").keyup(function () {
-            //split the current value of searchInput
-            var data = this.value.split(" ");
-            //create a jquery object of the rows
-            var jo = $("#fbody").find("tr");
-            if (this.value == "") {
-                jo.show();
-                return;
-            }
-            //hide all the rows
-            jo.hide();
-
-            //Recusively filter the jquery object to get results.
-            jo.filter(function (i, v) {
-                var $t = $(this);
-                for (var d = 0; d < data.length; ++d) {
-                    if ($t.is(":contains('" + data[d] + "')")) {
-                        return true;
-                    }
-                }
-                return false;
-            })
-            //show the rows that match.
-            .show();
-        }).focus(function () {
-            this.value = "";
-            $(this).css({
-                "color": "black"
-            });
-            $(this).unbind('focus');
-        }).css({
-            "color": "#C0C0C0"
         });
     </script>
 }

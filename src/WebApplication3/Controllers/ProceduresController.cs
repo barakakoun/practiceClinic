@@ -19,6 +19,17 @@ namespace WebApplication3.Controllers
         // GET: Procedures
         public IActionResult Index(int? nPatient)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            if (pLogged == null)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+            // If not manager is trying to watch index which is not his
+            if ((pLogged.ID != 1) && (nPatient != pLogged.ID))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             var allProcedures = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).ToList();
 
             if (nPatient == null)
@@ -40,10 +51,19 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            Procedure procedure = _context.Procedures.Single(m => m.ID == id);
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            Procedure procedure = _context.Procedures.SingleOrDefault(m => m.ID == id);
             if (procedure == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("NotExistError", "Home");
+            }
+
+            // If regular user is trying to watch a procedure which is not his
+            // Or unlogged user is trying to access
+            if ((pLogged == null) || ((pLogged.ID != 1) && (procedure.PatientID != pLogged.ID)))
+            {
+                return RedirectToAction("PermissionError", "Home");
             }
 
             return View(procedure);

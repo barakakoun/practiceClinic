@@ -269,7 +269,115 @@ namespace WebApplication3.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        
+
+        [ActionName("Search")]
+        public IActionResult Search()
+        {
+            var patients = _context.Patients.Include(p => p.MedicineAllergies);
+
+            ViewBag.firstName = "";
+            ViewBag.lastName = "";
+            //ViewBag.nProc = 0;
+
+            var allergies = _context.Medicines.Select(c => new {
+                ID = c.ID,
+                Name = c.Name
+            }).ToList();
+
+            ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name");
+
+            return View(patients.ToList());
+        }
+
+        [HttpPost, ActionName("Search")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Search(string strFirst, string strLast, int nProc, string[] Allergies)
+        {
+            if (strFirst == null)
+            {
+                strFirst = "";
+            }
+            if (strLast == null)
+            {
+                strLast = "";
+            }
+
+            ViewBag.firstName = strFirst;
+            ViewBag.lastName = strLast;
+            if (nProc != 0)
+            {
+                ViewBag.nProc = nProc;
+            }
+            var allergies = _context.Medicines.Select(c => new {
+                ID = c.ID,
+                Name = c.Name
+            }).ToList();
+            // Build int array from the input
+            IEnumerable<int> lstMedsIds = Allergies.Select(curr => Int32.Parse(curr));
+
+            var selected = allergies.Where(c => lstMedsIds.Contains(c.ID)).ToList();
+
+            // selected in the end
+            ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name", selected.Select(t => t.ID).ToArray());
+
+            // Filter the patients by first and last name
+            var patients = _context.Patients.Include(d => d.MedicineAllergies).Include(p => p.Prucedures)
+                                .Where(m => ((m.FirstName).Contains(strFirst) && (m.LastName).Contains(strLast)));
+
+            var lstAfterMinProcs = new List<Patient>();
+
+            // Make sure to return only patients who has more procs than nProc
+            // If the value is 0, there's no need to check
+            if (nProc != 0)
+            {
+                foreach (Patient currPa in patients)
+                {
+                    if (currPa.Prucedures.Count >= nProc)
+                    {
+                        lstAfterMinProcs.Add(currPa);
+                    }
+                }
+            }
+            else
+            {
+                lstAfterMinProcs = patients.ToList();
+            }
+
+            var toReturn = new List<Patient>();
+
+            // We filter only if there where allergies chosen
+            if (Allergies.Count() > 0)
+            {
+
+                var meds = _context.Medicines.Include(d => d.PatientAllergic);
+
+                // Twice join - with condition to get only relevent meds
+                var filterMeds = lstAfterMinProcs
+                    .Join(_context.Medicine_Patients.Where(mp => lstMedsIds.Contains(mp.MedicineID)), p => p.ID, pc => pc.PatientID, (p, pc) => new { p, pc })
+                    .Join(meds, ppc => ppc.pc.MedicineID, c => c.ID, (ppc, c) => new { ppc, c })
+                    .Select(m => new {
+                        PatientID = m.ppc.p.ID
+                    }).Distinct();
+
+                var patientIds = new List<int>();
+
+                // Build array of the filtered patients
+                foreach (var curr in filterMeds)
+                {
+                    patientIds.Add(curr.PatientID);
+                }
+
+                // Now we ask for the patients who fulfill all the filters
+                toReturn = patients.Where(p => patientIds.Contains(p.ID)).ToList();
+            }
+            else
+            {
+                toReturn = lstAfterMinProcs;
+            }
+
+            return View(toReturn);
+        }
+
 
         public IActionResult LogOff()
         {

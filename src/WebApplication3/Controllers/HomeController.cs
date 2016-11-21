@@ -13,6 +13,10 @@ namespace WebApplication3.Controllers
         {
             return View();
         }
+        public IActionResult NotExistError()
+        {
+            return View();
+        }
 
         public IActionResult About()
         {

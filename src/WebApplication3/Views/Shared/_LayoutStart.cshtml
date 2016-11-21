@@ -36,6 +36,13 @@
             @if ((currPatient != null) && (currPatient.ID == 1))
             {
                 <li class="nav-item"><a class="nav-link" asp-controller="Patients" asp-action="Index">Patients</a></li>
+                @*<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" asp-controller="Patients" asp-action="Index">Patients</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" asp-controller="Patients" asp-action="Index">List</a>
+                        <a class="dropdown-item" asp-controller="Patients" asp-action="Create">Create</a>
+                        <a class="dropdown-item" asp-controller="Patients" asp-action="Create">Search</a>
+                    </div>
+                </li>*@
                 <li class="nav-item"><a class="nav-link" asp-controller="Procedures" asp-action="Index">Procedures</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="ProcedureTypes" asp-action="Index">Procedure Types</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Medicines" asp-action="Index">Medicines</a></li>
