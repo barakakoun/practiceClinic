@@ -29,7 +29,8 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            Medicine Medicine = _context.Medicines.SingleOrDefault(m => m.ID == id);
+            // If not exist..
             if (Medicine == null)
             {
                 return HttpNotFound();
@@ -42,8 +43,13 @@ namespace WebApplication3.Controllers
         public IActionResult Create()
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager creates meds
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
@@ -56,6 +62,18 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Medicine Medicine)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager creates meds
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Medicines.Add(Medicine);
@@ -69,18 +87,25 @@ namespace WebApplication3.Controllers
         public IActionResult Edit(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager edits meds
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
 
+            // If no parameter..
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            Medicine Medicine = _context.Medicines.SingleOrDefault(m => m.ID == id);
+            // If not exist
             if (Medicine == null)
             {
                 return HttpNotFound();
@@ -93,6 +118,19 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Medicine Medicine)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager can do this action
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            // If valid - save
             if (ModelState.IsValid)
             {
                 _context.Update(Medicine);
@@ -107,18 +145,25 @@ namespace WebApplication3.Controllers
         public IActionResult Delete(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager can do this action
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
 
+            // If no parameter..
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            Medicine Medicine = _context.Medicines.SingleOrDefault(m => m.ID == id);
+            // If not exist
             if (Medicine == null)
             {
                 return HttpNotFound();
@@ -132,7 +177,25 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            Medicine Medicine = _context.Medicines.Single(m => m.ID == id);
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager can do this action
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            Medicine Medicine = _context.Medicines.SingleOrDefault(m => m.ID == id);
+            // If not exist
+            if (Medicine == null)
+            {
+                return HttpNotFound();
+            }
+            // Delete and save
             _context.Medicines.Remove(Medicine);
             _context.SaveChanges();
             return RedirectToAction("Index");

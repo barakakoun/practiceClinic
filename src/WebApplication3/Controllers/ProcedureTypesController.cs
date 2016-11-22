@@ -29,7 +29,8 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
+            ProcedureType procedureType = _context.ProcedureTypes.SingleOrDefault(m => m.ID == id);
+            // If not exist
             if (procedureType == null)
             {
                 return HttpNotFound();
@@ -42,8 +43,13 @@ namespace WebApplication3.Controllers
         public IActionResult Create()
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager creates types
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
@@ -56,6 +62,18 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ProcedureType procedureType)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager creates types
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.ProcedureTypes.Add(procedureType);
@@ -69,8 +87,13 @@ namespace WebApplication3.Controllers
         public IActionResult Edit(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager edits types
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
@@ -80,7 +103,8 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
+            ProcedureType procedureType = _context.ProcedureTypes.SingleOrDefault(m => m.ID == id);
+            // If not exist
             if (procedureType == null)
             {
                 return HttpNotFound();
@@ -93,6 +117,19 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(ProcedureType procedureType)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager creates types
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            // If valid - update
             if (ModelState.IsValid)
             {
                 _context.Update(procedureType);
@@ -107,8 +144,13 @@ namespace WebApplication3.Controllers
         public IActionResult Delete(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager deletes types
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
@@ -118,7 +160,8 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
+            ProcedureType procedureType = _context.ProcedureTypes.SingleOrDefault(m => m.ID == id);
+            // If not exist..
             if (procedureType == null)
             {
                 return HttpNotFound();
@@ -132,7 +175,25 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            ProcedureType procedureType = _context.ProcedureTypes.Single(m => m.ID == id);
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager deletes types
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            ProcedureType procedureType = _context.ProcedureTypes.SingleOrDefault(m => m.ID == id);
+            // If not exist..
+            if (procedureType == null)
+            {
+                return HttpNotFound();
+            }
+            // If exist - delete and save
             _context.ProcedureTypes.Remove(procedureType);
             _context.SaveChanges();
             return RedirectToAction("Index");

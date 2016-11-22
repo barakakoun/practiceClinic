@@ -24,26 +24,56 @@ namespace WebApplication3.Controllers
         // GET: Patients
         public IActionResult Index()
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+
+            // If not manager - not allowed to see all the user, obiouslyyyyy!!!
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             var patients = _context.Patients.Include(p => p.MedicineAllergies);
-            //var patients = _context.Patients;
+
             return View(patients.ToList());
         }
 
         // GET: Patients/Details/5
         public IActionResult Details(int? id)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // If no id was received
             if (id == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("NotExistError", "Home");
             }
 
-            Patient patient = _context.Patients.Include(d => d.MedicineAllergies).Include(d => d.Prucedures).Single(m => m.ID == id);
+            // Only manager has permission to make this function, or the user to himself
+            if ((pLogged.ID != 1) && (pLogged.ID != id))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
 
+            Patient patient = _context.Patients.Include(d => d.MedicineAllergies).Include(d => d.Prucedures).SingleOrDefault(m => m.ID == id);
+
+            // If user isnt exist
             if (patient == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("NotExistError", "Home");
             }
 
+            // Get all the user's allergies names with join query
             var allergies =
                 from MP in patient.MedicineAllergies
                 where MP.PatientID == patient.ID
@@ -57,6 +87,7 @@ namespace WebApplication3.Controllers
         // GET: Patients/Create
         public IActionResult Create()
         {
+            // Get all the allargies
             var allergies = _context.Medicines.Select(c => new {
                 ID = c.ID,
                 Name = c.Name
@@ -72,23 +103,35 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Patient patient, string[] Allergies)
         {
-            if (_context.Patients.Any())
+            // If the patient is already registered, dont make it
+            bool isExist = _context.Patients.Any(m => m.Identifier.Equals(patient.Identifier));
+            if (isExist)
             {
-                bool isExist;
+                ModelState.AddModelError(string.Empty, "User with the same Identifier is already exist");
 
+                var allergies = _context.Medicines.Select(c => new {
+                    ID = c.ID,
+                    Name = c.Name
+                }).ToList();
 
-                isExist = _context.Patients.Any(m => m.Identifier.Equals(patient.Identifier));
-                if (isExist)
-                {
-                    ModelState.AddModelError(string.Empty, "User with the same Identifier is already exist");
-                    return View(patient);
-                }
+                // Build int array from the input
+                IEnumerable<int> lstMedsIds = Allergies.Select(curr => Int32.Parse(curr));
+
+                var selected = allergies.Where(c => lstMedsIds.Contains(c.ID)).ToList();
+
+                // selected in the end
+                ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name", selected.Select(t => t.ID).ToArray());
+
+                return View(patient);
             }
+            
 
             if (ModelState.IsValid)
             {
                 _context.Patients.Add(patient);
                 _context.SaveChanges();
+
+                // If no user logged - log in the created user
                 if (Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient") == null)
                 {
                     Services.SessionExtensions.SetObjectAsJson(HttpContext.Session, "patient", patient);
@@ -105,16 +148,8 @@ namespace WebApplication3.Controllers
                         mpNew.PatientID = nCurrPatientID;
 
                         _context.Medicine_Patients.Add(mpNew);
-
-                        // TODO : האם אפשר להוציא מהלולאה את השורה הזאת? 
                     }
                     _context.SaveChanges();
-
-                    // צריך לעדכן ידנית את הרשימה עבור המשתמש הספציפי?
-
-                    //List<Medicine> med = _context.Medicines.Where(t => lstMedsIds.Contains(t.ID)).ToList();
-                    //Medicine_Patient
-                    //patient.MedicineAllergies = med;
                 }
                 return RedirectToAction("Details", new { id = patient.ID });
             }
@@ -125,18 +160,32 @@ namespace WebApplication3.Controllers
         // GET: Patients/Edit/5
         public IActionResult Edit(int? id)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager has permission to make this function, or the user to himself
+            if ((pLogged.ID != 1) && (pLogged.ID != id))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            // Get the patient
-            Patient patient = _context.Patients.Include(p => p.MedicineAllergies).Include(p => p.Prucedures).Single(m => m.ID == id);
+            Patient patient = _context.Patients.Include(d => d.MedicineAllergies).Include(d => d.Prucedures).SingleOrDefault(m => m.ID == id);
+
             if (patient == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("NotExistError", "Home");
             }
 
+            // Get all the allergies
             var allergies = _context.Medicines.Select(c => new {
                 ID = c.ID,
                 Name = c.Name
@@ -155,6 +204,19 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Patient patient, string[] Allergies)
         {
+            Patient patientSession = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (patientSession == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager has permission to make this function, or the user to himself
+            if ((patientSession.ID != 1) && (patientSession.ID != patient.ID))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (ModelState.IsValid)
             {
                 // Find all the medicine that were unchosen and remove them
@@ -172,18 +234,28 @@ namespace WebApplication3.Controllers
                     // then add it!
                     if (!_context.Medicine_Patients.Any(curr=>curr.MedicineID.ToString().Equals(currChose)&&(curr.PatientID == patient.ID)))
                     {
+                        // Make new madicie_patient record
                         Medicine_Patient mpNew = new Medicine_Patient();
                         mpNew.MedicineID = Int32.Parse(currChose);
                         mpNew.PatientID = patient.ID;
 
+                        // And add it..
                         _context.Medicine_Patients.Add(mpNew);
                     }
                 }
 
+                // Save the changes
                 _context.Update(patient);
                 _context.SaveChanges();
+
+
+                if (patientSession.ID != 1)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
                 return RedirectToAction("Index");
             }
+
             return View(patient);
         }
 
@@ -192,18 +264,25 @@ namespace WebApplication3.Controllers
         public IActionResult Delete(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager has permission to make this function
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
 
+            // If theres no input
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            Patient patient = _context.Patients.Single(m => m.ID == id);
+            Patient patient = _context.Patients.SingleOrDefault(m => m.ID == id);
             if (patient == null)
             {
                 return HttpNotFound();
@@ -212,38 +291,36 @@ namespace WebApplication3.Controllers
             return View(patient);
         }
 
-        // GET: Medicine/5
-        //[ActionName("Medicine")]
-        //public List<Medicine> Medicine(int[] arrayOfValues)
-        //{
-        //    //if (id == null)
-        //    //{
-        //    //    return HttpNotFound();
-        //    //}
-
-        //    //Medicine med = _context.Medicines.Single(m => m.ID == id);
-
-        //    List<Medicine> med = _context.Medicines.Where(t => arrayOfValues.Contains(t.ID)).ToList();
-        //    //if (med == null)
-        //    //{
-        //    //    return HttpNotFound();
-        //    //}
-
-        //    return med;
-        //}
-
         // POST: Patients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            Patient patient = _context.Patients.Single(m => m.ID == id);
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager has permission to make this function
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            // Get, remove and delete the user
+            Patient patient = _context.Patients.SingleOrDefault(m => m.ID == id);
+            // If wrong ID
+            if (patient == null)
+            {
+                return RedirectToAction("NotExistError", "Home");
+            }
             _context.Patients.Remove(patient);
             _context.SaveChanges();
+
             return RedirectToAction("Index");
         }
-
-
 
         // GET: Patients/LogIn
         [ActionName("LogIn")]
@@ -257,11 +334,18 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LogIn(string identifier, string password)
         {
-            Patient patient = _context.Patients.Single(m => (m.Identifier).Equals(identifier));
+            Patient patient = _context.Patients.SingleOrDefault(m => (m.Identifier).Equals(identifier));
+
+            // If wrong ID
+            if (patient == null)
+            {
+                return RedirectToAction("NotExistError", "Home");
+            }
+
+            // If the password is wrong
             if (!patient.Password.Equals(password))
             {
-                ModelState.AddModelError(string.Empty, "Invalid ID or password");
-                // ???????
+                ModelState.AddModelError(string.Empty, "Wrong password");
                 return View();
             }
 
@@ -273,11 +357,18 @@ namespace WebApplication3.Controllers
         [ActionName("Search")]
         public IActionResult Search()
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+
             var patients = _context.Patients.Include(p => p.MedicineAllergies);
 
             ViewBag.firstName = "";
             ViewBag.lastName = "";
-            //ViewBag.nProc = 0;
 
             var allergies = _context.Medicines.Select(c => new {
                 ID = c.ID,
@@ -293,6 +384,20 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Search(string strFirst, string strLast, int nProc, string[] Allergies)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager has permission to make this function, or the user to himself
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            // Reset the unchosen parameters
             if (strFirst == null)
             {
                 strFirst = "";
@@ -301,6 +406,8 @@ namespace WebApplication3.Controllers
             {
                 strLast = "";
             }
+
+            #region Update the viewbag to current parameters (so they wont dissapear)
 
             ViewBag.firstName = strFirst;
             ViewBag.lastName = strLast;
@@ -319,6 +426,9 @@ namespace WebApplication3.Controllers
 
             // selected in the end
             ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name", selected.Select(t => t.ID).ToArray());
+
+            #endregion
+            
 
             // Filter the patients by first and last name
             var patients = _context.Patients.Include(d => d.MedicineAllergies).Include(p => p.Prucedures)
@@ -381,6 +491,7 @@ namespace WebApplication3.Controllers
 
         public IActionResult LogOff()
         {
+            // Clear the session
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }

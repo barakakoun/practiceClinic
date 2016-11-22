@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using WebApplication3.Models;
 using System.Collections.Generic;
+using System;
 
 namespace WebApplication3.Controllers
 {
@@ -22,7 +23,7 @@ namespace WebApplication3.Controllers
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
             if (pLogged == null)
             {
-                return RedirectToAction("PermissionError", "Home");
+                return RedirectToAction("NotLoggedError", "Home");
             }
             // If not manager is trying to watch index which is not his
             if ((pLogged.ID != 1) && (nPatient != pLogged.ID))
@@ -36,8 +37,9 @@ namespace WebApplication3.Controllers
             {
                 return View(allProcedures);
             }
+
             ViewData["nCurrPatient"] = nPatient;
-            ViewBag.nCurrPatient = nPatient;
+            //ViewBag.nCurrPatient = nPatient;
 
             // Add the object of the client so we can read it's name
             return View(allProcedures.Where(p => p.PatientID == nPatient));
@@ -53,15 +55,19 @@ namespace WebApplication3.Controllers
 
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
 
-            Procedure procedure = _context.Procedures.SingleOrDefault(m => m.ID == id);
+            Procedure procedure = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).SingleOrDefault(m => m.ID == id);
+
             if (procedure == null)
             {
                 return RedirectToAction("NotExistError", "Home");
             }
-
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
             // If regular user is trying to watch a procedure which is not his
             // Or unlogged user is trying to access
-            if ((pLogged == null) || ((pLogged.ID != 1) && (procedure.PatientID != pLogged.ID)))
+            if ((pLogged.ID != 1) && (procedure.PatientID != pLogged.ID))
             {
                 return RedirectToAction("PermissionError", "Home");
             }
@@ -73,12 +79,17 @@ namespace WebApplication3.Controllers
         public IActionResult Create(int? PatientID, int? ProcedureTypeID)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
 
+            // Build list of patients the user can choose one to schedule for
             List<object> newPatList = new List<object>();
             foreach (var ptCurr in _context.Patients)
                 newPatList.Add(new
@@ -87,6 +98,7 @@ namespace WebApplication3.Controllers
                     Name = ptCurr.FirstName + " " + ptCurr.LastName + " (" + ptCurr.Identifier + ")"
                 });
 
+            // If theres chosen patient, set him as chosen
             if (PatientID != null)
             {
                 ViewBag.PatientID = new SelectList(newPatList, "ID", "Name", PatientID);
@@ -96,6 +108,7 @@ namespace WebApplication3.Controllers
                 ViewBag.PatientID = new SelectList(newPatList, "ID", "Name");
             }
 
+            // If theres chosen proc, set him as chosen
             if (ProcedureTypeID != null)
             {
                 ViewBag.ProcedureTypeID = new SelectList(_context.ProcedureTypes, "ID", "Name", ProcedureTypeID);
@@ -113,6 +126,19 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Procedure procedure)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager creates procedures
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+
             if (ModelState.IsValid)
             {
                 _context.Procedures.Add(procedure);
@@ -121,6 +147,9 @@ namespace WebApplication3.Controllers
             }
 
             int PatientID = procedure.PatientID, ProcedureTypeID = procedure.ProcedureTypeID;
+
+            // IF NOT VALID
+            // Same as the get function, set the values
             List<object> newPatList = new List<object>();
             foreach (var ptCurr in _context.Patients)
                 newPatList.Add(new
@@ -155,22 +184,26 @@ namespace WebApplication3.Controllers
         public IActionResult Edit(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager edits procedures
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
 
+            // No parameter
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            var proceduretry =
-                from it in _context.Procedures
-                where it.ID.Equals(id)
-                select it;
-            Procedure procedure = _context.Procedures.Single(m => m.ID == id);
+
+            Procedure procedure = _context.Procedures.SingleOrDefault(m => m.ID == id);
+            // If the proc isnt exist
             if (procedure == null)
             {
                 return HttpNotFound();
@@ -183,6 +216,19 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Procedure procedure)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager edits procedures
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            // If valid, save..
             if (ModelState.IsValid)
             {
                 _context.Update(procedure);
@@ -192,13 +238,94 @@ namespace WebApplication3.Controllers
             return View(procedure);
         }
 
+        // GET
+        [ActionName("Search")]
+        public IActionResult Search()
+        {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+
+            //var patients = _context.Patients.Include(p => p.MedicineAllergies);
+
+            //ViewBag.minPrice = "";
+            //ViewBag.maxPrice = "";
+
+            //var allergies = _context.Medicines.Select(c => new {
+            //    ID = c.ID,
+            //    Name = c.Name
+            //}).ToList();
+
+            //ViewBag.Allergies = new MultiSelectList(allergies, "ID", "Name");
+
+
+            var allProcedures = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).ToList();
+
+            if (pLogged.ID == 1)
+            {
+                return View(allProcedures);
+            }
+
+            return View(allProcedures.Where(p => p.PatientID == pLogged.ID).ToList());
+        }
+
+        // POST
+        [HttpPost, ActionName("Search")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Search(int minPrice, int maxPrice, string pDate, string unPaid)
+        {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            DateTime dt;
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+
+            if (minPrice != 0)
+            {
+                ViewBag.minPrice = minPrice;
+            }
+            if ((maxPrice != 0) && (maxPrice != 999999))
+            {
+                ViewBag.maxPrice = maxPrice;
+            }
+
+            var toReturn = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).
+                                Where(p => (p.Price <= maxPrice) && (p.Price >= minPrice)).ToList();
+
+            if (pDate != null)
+            {
+                ViewBag.pDate = pDate;
+                dt = Convert.ToDateTime(pDate);
+                toReturn = toReturn.Where(p => p.Time.Date.CompareTo(dt) == 0).ToList();
+            }
+
+            if (unPaid == "on")
+            {
+                ViewBag.unPaid = unPaid;
+                toReturn = toReturn.Where(p => p.IsPaid == false).ToList();
+            }
+
+            return View(toReturn);
+        }
+
         // GET: Procedures/Delete/5
         [ActionName("Delete")]
         public IActionResult Delete(int? id)
         {
             Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
-            if ((pLogged == null) ||
-                (pLogged.ID != 1))
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager edits procedures
+            if (pLogged.ID != 1)
             {
                 return RedirectToAction("PermissionError", "Home");
             }
@@ -208,7 +335,7 @@ namespace WebApplication3.Controllers
                 return HttpNotFound();
             }
 
-            Procedure procedure = _context.Procedures.Single(m => m.ID == id);
+            Procedure procedure = _context.Procedures.SingleOrDefault(m => m.ID == id);
             if (procedure == null)
             {
                 return HttpNotFound();
@@ -222,7 +349,24 @@ namespace WebApplication3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            Procedure procedure = _context.Procedures.Single(m => m.ID == id);
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // Only manager edits procedures
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            // Delete..
+            Procedure procedure = _context.Procedures.SingleOrDefault(m => m.ID == id);
+            if (procedure == null)
+            {
+                return HttpNotFound();
+            }
             _context.Procedures.Remove(procedure);
             _context.SaveChanges();
             return RedirectToAction("Index");

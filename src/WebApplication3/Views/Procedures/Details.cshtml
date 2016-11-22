@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Procedure Details";
+    Patient currPatient = WebApplication3.Services.SessionExtensions.GetObjectFromJson<Patient>(Context.Session, "patient");
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -9,6 +10,21 @@
 <div>
     <hr />
     <dl class="dl-horizontal">
+            @if (currPatient.ID == 1)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.PatientID)
+                </dt>
+                <dd>
+                    <a class="btn btn-sm btnChosenPatient" id="btnPatient" data-toggle="modal" data-target="#patient-@Model.PatientID" style="color: blue;font-weight: bold;">@Model.Patient.FirstName @Model.Patient.LastName</a>
+                </dd>
+            }
+            <dt>
+                @Html.DisplayNameFor(model => model.ProcedureTypeID)
+            </dt>
+            <dd>
+                <a class="btn btn-sm btnChosenType" id="btnType" data-toggle="modal" data-target="#type-@Model.ProcedureTypeID" style="color: blue;font-weight: bold;">@Model.ProcedureType.Name</a>
+            </dd>
         <dt>
             @Html.DisplayNameFor(model => model.IsPaid)
         </dt>
@@ -29,7 +45,123 @@
         </dd>
     </dl>
 </div>
+
+<div class="modal fade" id="type-@Model.ProcedureTypeID" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0275d8;color: white;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Procedure Type Details</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Name
+                    </dt>
+                    <dd>
+                        @Model.ProcedureType.Name
+                    </dd>
+                    <dt>
+                        Duration
+                    </dt>
+                    <dd>
+                        @Model.ProcedureType.Duration
+                    </dd>
+                    <dt>
+                        Type
+                    </dt>
+                    <dd>
+                        @Model.ProcedureType.Type.ToString()
+                    </dd>
+                    @if (currPatient.ID == 1)
+                    {
+                        <dt>
+                            Recommanded Price
+                        </dt>
+                        <dd>
+                            @Model.ProcedureType.Price
+                        </dd>
+                    }
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a asp-controller="ProcedureTypes" asp-action="Details" asp-route-id="@Model.ProcedureTypeID" type="button" class="btn btn-primary">Procedure Type Page</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (currPatient.ID == 1)
+{
+<div class="modal fade" name="hey-@Model.PatientID" id="patient-@Model.PatientID" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0275d8;color: white;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Patient Details</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Identifier
+                    </dt>
+                    <dd>
+                        @Model.Patient.Identifier
+                    </dd>
+                    <dt>
+                        First Name
+                    </dt>
+                    <dd>
+                        @Model.Patient.FirstName
+                    </dd>
+                    <dt>
+                        Last Name
+                    </dt>
+                    <dd>
+                        @Model.Patient.LastName
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(curr => curr.Patient.Birthday)
+                    </dt>
+                    <dd>
+                        @Model.Patient.Birthday.ToString(@"dd\/MM\/yyyy")
+                    </dd>
+                    <dt>
+                        Email
+                    </dt>
+                    <dd>
+                        @Model.Patient.Email
+                    </dd>
+                    <dt>
+                        Phone
+                    </dt>
+                    <dd>
+                        @Model.Patient.Phone
+                    </dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientID" type="button" class="btn btn-primary">Patient Page</a>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
 <div class="btn-group" role="group" aria-label="...">
-    <a asp-action="Index" class="btn btn-default">Back to List</a>
-    <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-primary">Edit</a>
+    @if (currPatient.ID == 1)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-default">Back to List</a>
+    }
+    else
+    {
+        <a asp-action="Index" asp-route-nPatient="@Model.PatientID" class="btn btn-default">Back to List</a>
+    }
 </div>

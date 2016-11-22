@@ -9,9 +9,10 @@
 @if (currPatient.ID == 1)
 {
     <p>
-        <a asp-action="Create" asp-route-PatientID="@ViewData["nCurrPatient"]" class="btn btn-default">Create New</a>
+        <a asp-action="Create" asp-route-PatientID="@ViewData["nCurrPatient"]" class="btn btn-default">Schedule New Procedure</a>
     </p>
 }
+<a asp-action="Search" class="btn btn-default">Search</a>
 
 <form id="__AjaxAntiForgeryForm" action="#" method="post"> @Html.AntiForgeryToken()</form>
 <table class="table">
@@ -158,12 +159,15 @@
                             <dd>
                                 @currProc.ProcedureType.Type.ToString()
                             </dd>
-                            <dt>
-                                Recommanded Price
-                            </dt>
-                            <dd>
-                                @currProc.ProcedureType.Price
-                            </dd>
+                            @if (currPatient.ID == 1)
+                            {
+                                <dt>
+                                    Recommanded Price
+                                </dt>
+                                <dd>
+                                    @currProc.ProcedureType.Price
+                                </dd>
+                            }
                         </dl>
                     </div>
                     <div class="modal-footer">

@@ -17,6 +17,10 @@ namespace WebApplication3.Controllers
         {
             return View();
         }
+        public IActionResult NotLoggedError()
+        {
+            return View();
+        }
 
         public IActionResult About()
         {
