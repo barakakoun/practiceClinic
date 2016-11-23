@@ -281,6 +281,10 @@ namespace WebApplication3.Controllers
             {
                 return HttpNotFound();
             }
+            if (id == 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
 
             Patient patient = _context.Patients.SingleOrDefault(m => m.ID == id);
             if (patient == null)
@@ -339,7 +343,7 @@ namespace WebApplication3.Controllers
             // If wrong ID
             if (patient == null)
             {
-                return RedirectToAction("NotExistError", "Home");
+                ModelState.AddModelError(string.Empty, "User not Exist");
             }
 
             // If the password is wrong

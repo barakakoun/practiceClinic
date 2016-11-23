@@ -10,9 +10,15 @@
 {
     <p>
         <a asp-action="Create" asp-route-PatientID="@ViewData["nCurrPatient"]" class="btn btn-default">Schedule New Procedure</a>
+        <a asp-action="Search" class="btn btn-default">Search</a>
     </p>
 }
-<a asp-action="Search" class="btn btn-default">Search</a>
+else
+{
+    <p>
+        <a asp-action="Search" class="btn btn-default">Search</a>
+    </p>
+}
 
 <form id="__AjaxAntiForgeryForm" action="#" method="post"> @Html.AntiForgeryToken()</form>
 <table class="table">

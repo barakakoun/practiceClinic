@@ -11,6 +11,18 @@
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="ID" />
         <div class="form-group">
+            <label asp-for="PatientID" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <span class="form-control" style="max-width:280px" readonly>@Model.Patient.FirstName @Model.Patient.LastName</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ProcedureTypeID" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <span class="form-control" style="max-width:280px" readonly>@Model.ProcedureType.Name</span>
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <div class="checkbox">
                     <input asp-for="IsPaid" id="isPaid" onChange="cbInputChange(this)" />
@@ -53,7 +65,7 @@
         <div class="form-group">
             <div class="btn-group" role="group" aria-label="...">
                 <a asp-action="Index" class="btn btn-default">Back to List</a>
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" id="btmSubmit" class="btn btn-primary" />
             </div>
         </div>
     </div>
@@ -65,21 +77,26 @@
     $(function () {
         // If the procedure was paid- dont let the user to change the price
         if ($('#isPaid').is(':checked')) {
-            $("#priceInput").prop('disabled', true);
+            $("#priceInput").prop('readonly', true);
         }
         $('#datetimepicker11').datetimepicker({
             daysOfWeekDisabled: [0, 6]
         });
     });
 
+    $("#btmSubmit").on('click', function (e) {
+
+        var hey = "hry";
+    });
+
     // Function that disable/enable price input when the user click the checkbox
     function cbInputChange(cb, inputID) {
         // If the user checked the checkbox- disable the input
         if (cb.checked) {
-            $("#priceInput").prop('disabled', true);
+            $("#priceInput").prop('readonly', true);
         } else {
             // If the user unchecked the checkbox- enable the input
-            $("#priceInput").prop('disabled', false);
+            $("#priceInput").prop('readonly', false);
         }
     };
 

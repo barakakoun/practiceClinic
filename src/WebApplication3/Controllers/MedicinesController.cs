@@ -18,12 +18,40 @@ namespace WebApplication3.Controllers
         // GET: Medicines
         public IActionResult Index()
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+
+            // If not manager - not allowed to see all the user, obiouslyyyyy!!!
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             return View(_context.Medicines.ToList());
         }
 
         // GET: Medicines/Details/5
         public IActionResult Details(int? id)
         {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+
+            // If no user logged in
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+
+            // If not manager - not allowed to see all the user, obiouslyyyyy!!!
+            if (pLogged.ID != 1)
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
             if (id == null)
             {
                 return HttpNotFound();

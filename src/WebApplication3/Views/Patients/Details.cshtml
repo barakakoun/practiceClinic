@@ -70,7 +70,10 @@
         {
             <a asp-action="Index" class="btn btn-default">Back to List</a>
             <a asp-controller="Procedures" asp-action="Create" asp-route-PatientID="@Model.ID" class="btn btn-default" id="btnEdit">Schedual New Prodcedure</a>
-            <a asp-action="Delete" asp-route-id="@Model.ID" class="btn btn-default">Delete</a>
+            @if (Model.ID != 1)
+            {
+                <a asp-action="Delete" asp-route-id="@Model.ID" class="btn btn-default">Delete</a>
+            }
         }
         <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-default">Edit</a>
     </div>

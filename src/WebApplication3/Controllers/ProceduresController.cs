@@ -202,7 +202,7 @@ namespace WebApplication3.Controllers
             }
 
 
-            Procedure procedure = _context.Procedures.SingleOrDefault(m => m.ID == id);
+            Procedure procedure = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).SingleOrDefault(m => m.ID == id);
             // If the proc isnt exist
             if (procedure == null)
             {
@@ -250,6 +250,8 @@ namespace WebApplication3.Controllers
                 return RedirectToAction("NotLoggedError", "Home");
             }
 
+
+
             //var patients = _context.Patients.Include(p => p.MedicineAllergies);
 
             //ViewBag.minPrice = "";
@@ -295,8 +297,19 @@ namespace WebApplication3.Controllers
                 ViewBag.maxPrice = maxPrice;
             }
 
-            var toReturn = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).
-                                Where(p => (p.Price <= maxPrice) && (p.Price >= minPrice)).ToList();
+            var allProcs = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient);
+
+            var toReturn = new List<Procedure>();
+            // If the searcher is not the manager, you should only show his procs
+            if (pLogged.ID != 1)
+            {
+                toReturn = allProcs.Where(p => (p.Price <= maxPrice) && (p.Price >= minPrice) && (p.PatientID == pLogged.ID)).ToList();
+            }
+            else
+            {
+                toReturn = allProcs.Where(p => (p.Price <= maxPrice) && (p.Price >= minPrice)).ToList();
+            }
+            
 
             if (pDate != null)
             {
@@ -305,9 +318,9 @@ namespace WebApplication3.Controllers
                 toReturn = toReturn.Where(p => p.Time.Date.CompareTo(dt) == 0).ToList();
             }
 
+            ViewBag.unPaid = unPaid;
             if (unPaid == "on")
             {
-                ViewBag.unPaid = unPaid;
                 toReturn = toReturn.Where(p => p.IsPaid == false).ToList();
             }
 
