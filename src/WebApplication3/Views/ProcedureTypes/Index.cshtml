@@ -29,12 +29,16 @@
         <input type="radio" name="groupBy" class="CgroupBy" value="DurationGroupBy" autocomplete="off"> Duration
     </label>
 </div>
-
+<br />
+<br />
 
 <table class="table TypeGroupBy" id="regularPatientView">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
+        <th class="col-lg-3">
+            <div class="input-group">
+                <label class="sr-only" for="searchName">Name</label>
+                <input id="searchName" placeholder="Name" type="text" class="form-control">
+            </div>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Type)
@@ -45,54 +49,58 @@
         <th>
             @Html.DisplayNameFor(model => model.Duration)
         </th>
-@if (currPatient.ID == 1)
-{
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-}
+        @if (currPatient.ID == 1)
+        {
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+        }
         <th></th>
     </tr>
-    
-@foreach (var item in Model) {
-    <tr id="@item.ID">
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Anesthesia)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Duration)
-        </td>
-@if (currPatient.ID == 1)
-{
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-}
-        <td>
-            <div class="btn-group" role="group">
-                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Options
-                </button>
-                <div class="dropdown-menu" role="group">
-                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
-                    @if (currPatient.ID == 1)
-                    {
-                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</a>
-                    <button type="button" class="btn btn-outline-danger btn-sm btnChosen dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
-                    <a asp-controller="Procedures" asp-action="Create" asp-route-ProcedureTypeID="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item" id="btnEdit">Schedual New Prodcedure</a>
-                    }
-                </div>
-            </div>
-        </td>
-    </tr>
-}
+    <tbody id="fbody">
+        @foreach (var item in Model)
+        {
+            <tr id="@item.ID">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Anesthesia)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Duration)
+                </td>
+                @if (currPatient.ID == 1)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                }
+                <td>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options
+                        </button>
+                        <div class="dropdown-menu" role="group">
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-success btn-sm btnChosen dropdown-item">Details</a>
+                            @if (currPatient.ID == 1)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-outline-info btn-sm btnChosen dropdown-item" id="btnEdit">Edit</a>
+                                <button type="button" class="btn btn-outline-danger btn-sm btnChosen dropdown-item" id="btnDelete" data-toggle="modal" data-target="#confirmDelete">Delete</button>
+                                <a asp-controller="Procedures" asp-action="Create" asp-route-ProcedureTypeID="@item.ID" class="btn btn-outline-warning btn-sm btnChosen dropdown-item" id="btnEdit">Schedual New Prodcedure</a>
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
 </table>
+
+
 <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -268,6 +276,12 @@
         $('#groupByForm label').on('change', function () {
             $('.TypeGroupBy').not('#' + $('input[name=groupBy]:checked', '#groupByForm').val()).hide();
             $('#' + $('input[name=groupBy]:checked', '#groupByForm').val()).show();
+            //if (this.innerText != "Regular") {
+            //    $('.searchGroup').hide();
+            //}
+            //else {
+            //    $('.searchGroup').show();
+            //}
         });
 
         var nIdChosen;
@@ -295,6 +309,76 @@
                     })
                 });
             }
+        });
+
+        // For Description
+        $("#searchDescription").keyup(function () {
+            //split the current value of searchInput
+            var data = this.value.split(" ");
+            //create a jquery object of the rows
+            var jo = $("#fbody").find("tr");
+            if (this.value == "") {
+                jo.show();
+                return;
+            }
+            //hide all the rows
+            jo.hide();
+
+            //Recusively filter the jquery object to get results.
+            jo.filter(function (i, v) {
+                var $t = $(this);
+                for (var d = 0; d < data.length; ++d) {
+                    if ($t.context.children[1].innerText.toLowerCase().indexOf(data[d].toLowerCase()) >= 0) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+            //show the rows that match
+            .show();
+        }).focus(function () {
+            this.value = "";
+            $(this).css({
+                "color": "black"
+            });
+            $(this).unbind('focus');
+        }).css({
+            "color": "#C0C0C0"
+        });
+
+        // For name
+        $("#searchName").keyup(function () {
+            //split the current value of searchInput
+            var data = this.value.split(" ");
+            //create a jquery object of the rows
+            var jo = $("#fbody").find("tr");
+            if (this.value == "") {
+                jo.show();
+                return;
+            }
+            //hide all the rows
+            jo.hide();
+
+            //Recusively filter the jquery object to get results.
+            jo.filter(function (i, v) {
+                var $t = $(this);
+                for (var d = 0; d < data.length; ++d) {
+                    if ($t.context.children[0].innerText.toLowerCase().indexOf(data[d].toLowerCase()) >= 0) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+            //show the rows that match
+            .show();
+        }).focus(function () {
+            this.value = "";
+            $(this).css({
+                "color": "black"
+            });
+            $(this).unbind('focus');
+        }).css({
+            "color": "#C0C0C0"
         });
 
     </script>
