@@ -71,6 +71,7 @@ namespace WebApplication3.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Display(Name = "Buying Address")]
         public string Address { get; set; }
 
 
