@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace WebApplication3.Models
         [Range(1, Int32.MaxValue, ErrorMessage = "Price is a positive number")]
         public int Duration { get; set; }
 
-
+        [JsonIgnore]
         public virtual ICollection<Procedure> Procedures { get; set; }
     }
 

@@ -206,7 +206,8 @@ else
     </div>
 </div>
 
-
+<div id="chart-avg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="chart-age" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 @section scripts {
     <script type="text/javascript">
@@ -243,5 +244,105 @@ else
             }
         });
 
+        $(function () {
+            var AllProcedures = @Html.Raw(Json.Serialize(Model));
+            var data = [];
+            var dataAge = [];
+            var combine = 0;
+            var ageProcedure = {};
+            AllProcedures.sort(function(a, b){
+                var keyA = new Date(a.Time),
+                    keyB = new Date(b.Time);
+                // Compare the 2 dates
+                if(keyA < keyB) return -1;
+                if(keyA > keyB) return 1;
+                return 0;
+            });
+            for(var Procedure in AllProcedures){
+                var date  = new Date(AllProcedures[Procedure].Time)
+                var dateformat = Date.UTC(date.getYear(),date.getMonth(),date.getDate())
+                combine += AllProcedures[Procedure].Price;
+                if(AllProcedures.length - 1 == parseInt(Procedure) || new Date(AllProcedures[parseInt(Procedure) + 1].Time).toDateString() !== date.toDateString()){
+                    data.push([dateformat,combine]);
+                    combine = 0;
+                }          
+                var age = new Date().getYear() - new Date(AllProcedures[Procedure].Patient.Birthday).getYear();
+                if(ageProcedure[age]){
+                    ageProcedure[age]++;
+                } else {
+                    ageProcedure[age] = 1;
+                }
+            }
+
+            var ageColumn = [];
+            for(var item in ageProcedure) {
+                dataAge.push([item,ageProcedure[item]]);
+                ageColumn.push(item);
+            }
+
+            Highcharts.chart('chart-avg', {
+                title: {
+                    text: 'Amount per day',
+                    x: -20 //center
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'amount'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: '$'
+                },
+                legend: {
+                    enabled: false
+                },
+                series: [{
+                    type: 'area',
+                    name: 'amount',
+                    data: data
+                }]
+            });
+            Highcharts.chart('chart-age', {
+                title: {
+                    text: 'age per Procedure',
+                    x: -20 //center
+                },
+                xAxis: {
+                    title: {
+                        text: 'age'
+                    },categories:ageColumn
+                },
+                yAxis: {
+                    title: {
+                        text: 'Procedure'
+                    }
+                 
+                },
+                
+                legend: {
+                    enabled: false
+                },
+                series: [{
+                    type: 'column',
+                    name: 'amount',
+                    data: dataAge
+                }]
+            });
+        });
     </script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
 }

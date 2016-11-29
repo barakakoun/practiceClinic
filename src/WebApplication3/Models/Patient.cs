@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNet.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApplication3.Models
@@ -59,6 +61,7 @@ namespace WebApplication3.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [JsonIgnore]
         [Display(Name = "Prucedures")]
         public virtual ICollection<Procedure> Prucedures { get; set; }
 

@@ -26,9 +26,49 @@
         <dd>
             @Html.DisplayFor(model => model.Address)
         </dd>
+        <dd>
+            <div >
+                <div  id="map_canvas" style="height:250px; width:50%;"></div>
+            </div>
+        </dd>
     </dl>
 </div>
 <div class="btn-group" role="group" aria-label="...">
     <a asp-action="Index" class="btn btn-default">Back to List</a>
     <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-primary">Edit</a>
 </div>
+
+@section Scripts {
+
+    <script>        
+        var map;
+        function initialize() {
+            map = new google.maps.Map(document.getElementById('map_canvas'), {
+                center: {
+                    lat: 32.0852999, lng: 34.78176759999999},
+                zoom: 8
+            });
+
+            loadAddress();
+        }
+
+        function loadAddress() {
+            $.ajax({url:"https://maps.googleapis.com/maps/api/geocode/json?address=\"@Model.Address\"&key=AIzaSyDQ92FbCEeGOqxAMaYXLI_xwI5B4UVSjto",success: function(result){
+                if (result.results.length > 0) {
+                    var location = result.results[0].geometry.location;
+                    map.setCenter(location);
+                    
+                    var marker = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                        title: result.results[0].formatted_address
+                    });
+                }
+            }});
+
+        }
+        
+    </script>
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQ92FbCEeGOqxAMaYXLI_xwI5B4UVSjto&callback=initialize"></script>
+}

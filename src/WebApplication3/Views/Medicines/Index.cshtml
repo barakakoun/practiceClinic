@@ -91,6 +91,10 @@
     </div>
 </div>
 
+<div>
+    <div id="map_canvas_all_medicines" style="height:250px; width:50%;"></div>
+</div>
+
 @section scripts {
     <script type="text/javascript">
         AddAntiForgeryToken = function (data) {
@@ -230,4 +234,41 @@
         });
 
     </script>
+
+<script>
+
+        var mapAllMedicines;
+        function initialize() {
+            mapAllMedicines = new google.maps.Map(document.getElementById('map_canvas_all_medicines'), {
+                center: {
+                    lat: 32.0852999, lng: 34.78176759999999},
+                zoom: 8
+            });
+
+            loadAddress();
+        }
+
+        function loadAddress() {
+            var AllMedicines = @Html.Raw(Json.Serialize(Model));;
+            for(var Medicine in AllMedicines) {
+                $.ajax({url:"https://maps.googleapis.com/maps/api/geocode/json?address=" + AllMedicines[Medicine].Address + "&key=AIzaSyDQ92FbCEeGOqxAMaYXLI_xwI5B4UVSjto",success: function(result){
+                    if (result.results.length > 0) {
+                        var location = result.results[0].geometry.location;
+
+                        var marker = new google.maps.Marker({
+                            position: location,
+                            map: mapAllMedicines,
+                            title: result.results[0].formatted_address
+                        });
+                    }
+                }});
+
+            }
+
+
+        }
+
+</script>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQ92FbCEeGOqxAMaYXLI_xwI5B4UVSjto&callback=initialize"></script>
 }
