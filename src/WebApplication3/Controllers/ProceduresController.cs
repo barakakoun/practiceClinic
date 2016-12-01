@@ -45,6 +45,33 @@ namespace WebApplication3.Controllers
             return View(allProcedures.Where(p => p.PatientID == nPatient));
         }
 
+        public IActionResult Stats(int? nPatient)
+        {
+            Patient pLogged = Services.SessionExtensions.GetObjectFromJson<Patient>(HttpContext.Session, "patient");
+            if (pLogged == null)
+            {
+                return RedirectToAction("NotLoggedError", "Home");
+            }
+            // If not manager is trying to watch index which is not his
+            if ((pLogged.ID != 1) && (nPatient != pLogged.ID))
+            {
+                return RedirectToAction("PermissionError", "Home");
+            }
+
+            var allProcedures = _context.Procedures.Include(p => p.ProcedureType).Include(p => p.Patient).ToList();
+
+            if (nPatient == null)
+            {
+                return View(allProcedures);
+            }
+
+            ViewData["nCurrPatient"] = nPatient;
+            //ViewBag.nCurrPatient = nPatient;
+
+            // Add the object of the client so we can read it's name
+            return View(allProcedures.Where(p => p.PatientID == nPatient));
+        }
+
         // GET: Procedures/Details/5
         public IActionResult Details(int? id)
         {

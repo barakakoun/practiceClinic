@@ -27,10 +27,10 @@ namespace WebApplication3.Controllers
             }
 
             // If not manager - not allowed to see all the user, obiouslyyyyy!!!
-            if (pLogged.ID != 1)
-            {
-                return RedirectToAction("PermissionError", "Home");
-            }
+            //if (pLogged.ID != 1)
+            //{
+            //    return RedirectToAction("PermissionError", "Home");
+            //}
 
             return View(_context.Medicines.ToList());
         }
@@ -47,10 +47,10 @@ namespace WebApplication3.Controllers
             }
 
             // If not manager - not allowed to see all the user, obiouslyyyyy!!!
-            if (pLogged.ID != 1)
-            {
-                return RedirectToAction("PermissionError", "Home");
-            }
+            //if (pLogged.ID != 1)
+            //{
+            //    return RedirectToAction("PermissionError", "Home");
+            //}
 
             if (id == null)
             {
