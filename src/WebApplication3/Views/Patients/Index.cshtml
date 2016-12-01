@@ -147,14 +147,14 @@
                     @Html.Encode(item.Identifier)
                 </td>
                 <td>
-                    @Html.Encode(item.FirstName)
+                    @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
                 <td class="tdGroupByChosen">
                     @if (isFirst)
                     {
                         isFirst = false;
                         
-                        @Html.Encode(group.Key)
+                        @Html.DisplayFor(modelItem => group.Key)
                     }
                 </td>
                 <td>
@@ -212,10 +212,10 @@
         {
             <tr id="@Html.Encode(item.ID)">
                 <td>
-                    @Html.Encode(item.FirstName)
+                    @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
                 <td>
-                    @Html.Encode(item.LastName)
+                    @Html.DisplayFor(modelItem => item.LastName)
                 </td>
                 <td class="tdGroupByChosen">
                     @if (isFirst)
