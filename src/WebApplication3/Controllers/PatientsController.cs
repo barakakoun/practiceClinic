@@ -344,6 +344,7 @@ namespace WebApplication3.Controllers
             if (patient == null)
             {
                 ModelState.AddModelError(string.Empty, "User not Exist");
+                return View();
             }
 
             // If the password is wrong

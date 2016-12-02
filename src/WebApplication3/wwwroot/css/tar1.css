@@ -52,6 +52,7 @@ a.nav-link:focus {
 a.btn-outline-secondary {
     transition: 1s;
 }
+/* Multiple-columns */
 .newspaper {
     column-count: 3;
     column-gap: 10px;
